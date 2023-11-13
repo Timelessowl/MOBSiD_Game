@@ -12,7 +12,7 @@ media
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/
-
+.123.py
 # File-based project format
 *.iws
 
