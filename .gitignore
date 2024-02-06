@@ -4,13 +4,15 @@
 /.pnp
 .pnp.js
 /frontend/node_modules/
-
+/Django_MOBSiD_Game/node_modules/
 
 # testing
 /coverage
 
 # production
 /build
+
+/project/
 
 # misc
 .DS_Store
