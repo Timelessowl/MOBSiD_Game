@@ -5,6 +5,7 @@
 .pnp.js
 /frontend/node_modules/
 /Django_MOBSiD_Game/node_modules/
+/project/public
 
 # testing
 /coverage
@@ -12,7 +13,6 @@
 # production
 /build
 
-/project/
 
 # misc
 .DS_Store
@@ -40,6 +40,7 @@ media
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/
+.project/*
 .123.py
 # File-based project format
 *.iws
@@ -142,3 +143,5 @@ GitHub.sublime-settings
 .history
 
 /node_modules/
+/project/
+
