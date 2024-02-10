@@ -1,6 +1,6 @@
 import {Button} from 'reactstrap';
 import {Form, FormGroup, Label, Input} from 'reactstrap';
-// import {Container} from 'reactstrap';
+import {Link} from 'react-router-dom';
 import {
   // Collapse,
   Navbar,
@@ -20,7 +20,24 @@ import {useEffect, useState, FormEvent} from 'react';
 
 
 function AuthScreen(): JSX.Element {
+  type userType = {
+    email: string;
+    username: string;
+    isSuperUser: boolean;
+  }
+  type userDataType = {
+    user: userType;
+  };
+  const userInitData: userDataType = {
+    user: {
+      email: '',
+      username: '',
+      isSuperUser: false,
+    }
+  };
+
   const [currentUser, setCurrentUser] = useState(true);
+  const [userData, setuserData] = useState(userInitData);
   const [registrationToggle, setRegistrationToggle] = useState(false);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -28,8 +45,9 @@ function AuthScreen(): JSX.Element {
 
   useEffect(() => {
     client.get('/api/user')
-      .then(() => {
+      .then((response) => {
         setCurrentUser(true);
+        setuserData(response.data as userDataType);
       })
       .catch((error) => {
         setCurrentUser(false);
@@ -53,7 +71,8 @@ function AuthScreen(): JSX.Element {
       {
         email: email,
         username: username,
-        password: password
+        password: password,
+        isSuperuser: true
       }
     ).then(() => {
       client.post(
@@ -91,7 +110,7 @@ function AuthScreen(): JSX.Element {
     return (
       <div>
         <Navbar color='dark' dark>
-          <NavbarBrand>Authentication App</NavbarBrand>
+          <NavbarBrand>MOBSiD Authentication</NavbarBrand>
           <NavItem>
             <form onSubmit={submitLogout}>
               <Button type="submit" color='light' className="form_btn">Log Out</Button>
@@ -102,6 +121,11 @@ function AuthScreen(): JSX.Element {
           <h2 style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh'}}>You&#39;re
             logged in!
           </h2>
+          <Link style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '0vh'}} to="/">Back to game</Link>
+          <Label className="text-muted">
+            {userData.user.isSuperUser ? 'URESEPERUSER' : 'UNOTSUPERUSER'}
+          </Label>
+          <Label className="text-muted">test, {userData.user.email}</Label>
         </div>
       </div>
     );
@@ -109,7 +133,7 @@ function AuthScreen(): JSX.Element {
   return (
     <div>
       <Navbar color='dark' dark>
-        <NavbarBrand>Authentication App</NavbarBrand>
+        <NavbarBrand>MOBSiD Authentication</NavbarBrand>
         <NavItem>
           <form onSubmit={submitLogout}>
             <Button className="form_btn" onClick={updateFormBtn} variant="light">{registrationToggle ? 'Log In' : 'Register'}</Button>
