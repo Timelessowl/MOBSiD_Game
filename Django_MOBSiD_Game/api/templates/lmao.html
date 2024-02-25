@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: linear-gradient(135deg, #3498db, #9b59b6); /* Brighter and stronger gradient */
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #diagonal-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .diagonal-line {
+            position: absolute;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="diagonal-container"></div>
+    <script>
+        const text = `I have become so filled with knowledge that it's as if I've been living for trillions and trillions of years on countless planets just like this Earth. I completely understand this world, and I'm only seeking one thing here - tranquility, peace, and this harmony that comes from merging with the infinitely eternal, from contemplating the great fractal similarity, and from this wonderful unity with an infinitely eternal being, wherever you look, whether inward - infinitely small, or upward - infinitely large, you know what I mean? And here you are with your concerns again. Keep going with your own path; it's your destiny and your horizon of knowledge and the experience of your nature. It's incomprehensibly shallow compared to mine, you understand? It's as if I'm already an ancient sage, immortal, or almost immortal by now. I've been on this planet since its very inception, even when the Sun had just formed as a star, and from that gas and dust cloud, after the Sun's explosion when it ignited as a star, it began to form these coacervates, these planets, you understand? I've been living on this Earth for nearly five billion years and I know it inside out. I've experienced this whole world, but to me, your cars, your yachts, your apartments, and your well-being are irrelevant. I've been a multitude of things on this planet, greater than Caesar, greater than Hitler, greater than all the great ones, you understand, and in some places, I've been worse than a piece of shit, even worse than here. I feel a multitude of these states. Somewhere, I was more similar to a plant, somewhere, I was more like a bird, a worm, and in some places, I was just a solid rock. It's all part of the soul, you understand? It has countless facets of similarity. But you won't understand this, so go on with your life.`;
+
+        const diagonalContainer = document.getElementById("diagonal-container");
+        const lines = text.split(' ');
+        let currentTop = 0;
+        let fontSize = 32; // Set the starting font size to 32
+        let leftPosition = 0;
+
+        for (let i = 0; i < lines.length; i++) {
+            const div = document.createElement("div");
+            div.className = "diagonal-line";
+            div.style.top = currentTop + "px";
+            div.style.fontSize = `${fontSize}px`;
+            div.style.left = leftPosition + "px";
+            div.innerText = "";
+
+            while (i < lines.length && div.innerText.length + lines[i].length <= 40) {
+                div.innerText += (div.innerText ? ' ' : '') + lines[i];
+                i++;
+            }
+
+            diagonalContainer.appendChild(div);
+            currentTop += 40; // Increase line spacing
+            if (i % 3 === 0) {
+                fontSize -= 4; // Decrease font size every three lines
+            }
+            leftPosition += 40; // Apply an indent to the right for every line
+        }
+    </script>
+</body>
+</html>

@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+import environ
+
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 class AppUserManager(BaseUserManager):
@@ -15,11 +20,13 @@ class AppUserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, email, password=None, adminkey=None):
         if not email:
             raise ValueError('An email is required.')
         if not password:
             raise ValueError('A password is required.')
+        if adminkey != env('ADMIN_KEY'):
+            raise ValueError('Incorrect administrator key')
         user = self.create_user(email, password)
         user.isSuperUser = True
         user.save()

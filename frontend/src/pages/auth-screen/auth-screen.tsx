@@ -1,20 +1,7 @@
 import {Button} from 'reactstrap';
 import {Form, FormGroup, Label, Input} from 'reactstrap';
 import {Link} from 'react-router-dom';
-import {
-  // Collapse,
-  Navbar,
-  // NavbarToggler,
-  NavbarBrand,
-  // Nav,
-  NavItem,
-  // NavLink,
-  // UncontrolledDropdown,
-  // DropdownToggle,
-  // DropdownMenu,
-  // DropdownItem,
-  // NavbarText,
-} from 'reactstrap';
+import {Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {client} from '../../index';
 import {useEffect, useState, FormEvent} from 'react';
 
@@ -37,17 +24,19 @@ function AuthScreen(): JSX.Element {
   };
 
   const [currentUser, setCurrentUser] = useState(true);
-  const [userData, setuserData] = useState(userInitData);
+  const [userData, setUserData] = useState(userInitData);
+  const [superUserSwitch, setSuperUserSwitch] = useState(false);
   const [registrationToggle, setRegistrationToggle] = useState(false);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [adminKey, setAdminKey] = useState('');
 
   useEffect(() => {
     client.get('/api/user')
       .then((response) => {
         setCurrentUser(true);
-        setuserData(response.data as userDataType);
+        setUserData(response.data as userDataType);
       })
       .catch((error) => {
         setCurrentUser(false);
@@ -72,7 +61,8 @@ function AuthScreen(): JSX.Element {
         email: email,
         username: username,
         password: password,
-        isSuperuser: true
+        isSuperuser: superUserSwitch,
+        adminKey: adminKey
       }
     ).then(() => {
       client.post(
@@ -125,7 +115,7 @@ function AuthScreen(): JSX.Element {
           <Label className="text-muted">
             {userData.user.isSuperUser ? 'URESEPERUSER' : 'UNOTSUPERUSER'}
           </Label>
-          <Label className="text-muted">test, {userData.user.email}</Label>
+          <Label className="text-muted"> , {userData.user.email}</Label>
         </div>
       </div>
     );
@@ -175,9 +165,38 @@ function AuthScreen(): JSX.Element {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </FormGroup>
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
+              <FormGroup switch>
+                <Input
+                  type="switch"
+                  checked={superUserSwitch}
+                  onClick={() => {
+                    setSuperUserSwitch(!superUserSwitch);
+                  }}
+                />
+                <Label check>MOBSiD Administrator</Label>
+              </FormGroup>
+              {
+                superUserSwitch ? (
+                  <div>
+                    <Label className="password">
+                      Administrator key
+                    </Label>
+                    <Input
+                      name="adminKey"
+                      placeholder="Administrator key"
+                      
+                      type="password"
+                      value={adminKey}
+                      onChange={(e) => setAdminKey(e.target.value)}
+                    />
+                  </div>
+                ) : (<div></div>)
+              }
+              <div style={{marginTop: '1rem' }}>
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+              </div>
             </Form>
           </div>
         ) : (
