@@ -3,6 +3,7 @@ import {Fragment} from 'react';
 import GameScreen from '../../pages/game-screen/game-screen';
 
 import {BrowserRouter, Route, Routes, Link} from 'react-router-dom';
+import AdminScreen from '../../pages/admin-screen/admin-screen';
 
 function App(): JSX.Element {
   return (
@@ -11,6 +12,8 @@ function App(): JSX.Element {
         <Route path='/'>
           <Route index element={<GameScreen />} />
           <Route path='auth' element={<AuthScreen />}>
+          </Route>
+          <Route path='admin' element={<AdminScreen />}>
           </Route>
         </Route>
         <Route path="*" element={

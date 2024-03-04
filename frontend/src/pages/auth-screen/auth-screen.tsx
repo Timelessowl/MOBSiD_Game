@@ -4,17 +4,10 @@ import {Link} from 'react-router-dom';
 import {Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {client} from '../../index';
 import {useEffect, useState, FormEvent} from 'react';
-
+import {userDataType} from '../../types/types';
 
 function AuthScreen(): JSX.Element {
-  type userType = {
-    email: string;
-    username: string;
-    isSuperUser: boolean;
-  }
-  type userDataType = {
-    user: userType;
-  };
+
   const userInitData: userDataType = {
     user: {
       email: '',
@@ -183,8 +176,8 @@ function AuthScreen(): JSX.Element {
                     </Label>
                     <Input
                       name="adminKey"
-                      placeholder="Administrator key"
-                      
+                      // placeholder="Administrator key"
+                      placeholder="AASmirnov" //FIXME DONT COMMIT WITH THE CODE
                       type="password"
                       value={adminKey}
                       onChange={(e) => setAdminKey(e.target.value)}
