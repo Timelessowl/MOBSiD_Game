@@ -2,8 +2,10 @@ import {Button} from 'reactstrap';
 import {Form, FormGroup, Label, Input} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {Navbar, NavbarBrand, NavItem} from 'reactstrap';
+import {useAppDispatch} from '../../hooks';
 import {client} from '../../index';
 import {useEffect, useState, FormEvent} from 'react';
+import {loginAction} from '../../store/api-actions';
 import {userDataType} from '../../types/types';
 
 function AuthScreen(): JSX.Element {
@@ -15,6 +17,7 @@ function AuthScreen(): JSX.Element {
       isSuperUser: false,
     }
   };
+  const dispatch = useAppDispatch();
 
   const [currentUser, setCurrentUser] = useState(true);
   const [userData, setUserData] = useState(userInitData);
@@ -69,17 +72,26 @@ function AuthScreen(): JSX.Element {
       });
     });
   };
-  const submitLogin = (e: FormEvent) => {
-    e.preventDefault();
-    client.post(
-      '/api/login',
-      {
-        email: email,
-        password: password
-      }
-    ).then(() => {
-      setCurrentUser(true);
-    });
+  // const submitLogin = (e: FormEvent) => {
+  //   e.preventDefault();
+  //   client.post(
+  //     '/api/login',
+  //     {
+  //       email: email,
+  //       password: password
+  //     }
+  //   ).then(() => {
+  //     setCurrentUser(true);
+  //   });
+  // };
+  const submitLogin = (evt: FormEvent) => {
+    evt.preventDefault();
+
+    dispatch(loginAction({
+      email: email,
+      password: password,
+    }));
+    setCurrentUser(true);
   };
   const updateFormBtn = () => {
     if (registrationToggle) {
@@ -94,6 +106,7 @@ function AuthScreen(): JSX.Element {
       <div>
         <Navbar color='dark' dark>
           <NavbarBrand>MOBSiD Authentication</NavbarBrand>
+          {userData.user.isSuperUser ? <NavbarBrand>Admin</NavbarBrand> : <NavbarBrand>Student</NavbarBrand>}
           <NavItem>
             <form onSubmit={submitLogout}>
               <Button type="submit" color='light' className="form_btn">Log Out</Button>
@@ -105,10 +118,6 @@ function AuthScreen(): JSX.Element {
             logged in!
           </h2>
           <Link style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '0vh'}} to="/">Back to game</Link>
-          <Label className="text-muted">
-            {userData.user.isSuperUser ? 'URESEPERUSER' : 'UNOTSUPERUSER'}
-          </Label>
-          <Label className="text-muted"> , {userData.user.email}</Label>
         </div>
       </div>
     );
@@ -177,7 +186,7 @@ function AuthScreen(): JSX.Element {
                     <Input
                       name="adminKey"
                       // placeholder="Administrator key"
-                      placeholder="AASmirnov" //FIXME DONT COMMIT WITH THE CODE
+                      placeholder="AASmirnov" //doxxed this key to github so will change on release
                       type="password"
                       value={adminKey}
                       onChange={(e) => setAdminKey(e.target.value)}
