@@ -1,9 +1,10 @@
+/* eslint-disable */
 import {Button} from 'reactstrap';
 import {Form, FormGroup, Label, Input} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {useAppDispatch} from '../../hooks';
-import {client} from '../../index';
+import {api} from '../../store'
 import {useEffect, useState, FormEvent} from 'react';
 import {loginAction} from '../../store/api-actions';
 import {userDataType} from '../../types/types';
@@ -29,7 +30,7 @@ function AuthScreen(): JSX.Element {
   const [adminKey, setAdminKey] = useState('');
 
   useEffect(() => {
-    client.get('/api/user')
+    api.get('/api/user')
       .then((response) => {
         setCurrentUser(true);
         setUserData(response.data as userDataType);
@@ -40,9 +41,9 @@ function AuthScreen(): JSX.Element {
   }, []);
   const submitLogout = (evt: FormEvent) => {
     evt.preventDefault();
-    // alert('Logged Out'); // eslint-disable-line no-alert
+    // alert('Logged Out');
     // setCurrentUser(false);
-    client.post(
+    api.post(
       '/api/logout',
       {withCredentials: true}
     ).then(() => {
@@ -51,7 +52,7 @@ function AuthScreen(): JSX.Element {
   };
   const submitRegistration = (evt: FormEvent) => {
     evt.preventDefault();
-    client.post(
+    api.post(
       '/api/register',
       {
         email: email,
@@ -61,7 +62,7 @@ function AuthScreen(): JSX.Element {
         adminKey: adminKey
       }
     ).then(() => {
-      client.post(
+      api.post(
         '/api/login',
         {
           email: email,
@@ -72,27 +73,27 @@ function AuthScreen(): JSX.Element {
       });
     });
   };
-  // const submitLogin = (e: FormEvent) => {
-  //   e.preventDefault();
-  //   client.post(
-  //     '/api/login',
-  //     {
-  //       email: email,
-  //       password: password
-  //     }
-  //   ).then(() => {
-  //     setCurrentUser(true);
-  //   });
-  // };
-  const submitLogin = (evt: FormEvent) => {
-    evt.preventDefault();
-
-    dispatch(loginAction({
-      email: email,
-      password: password,
-    }));
-    setCurrentUser(true);
+  const submitLogin = (e: FormEvent) => {
+    e.preventDefault();
+    api.post(
+      '/api/login',
+      {
+        email: email,
+        password: password
+      }
+    ).then(() => {
+      setCurrentUser(true);
+    });
   };
+  // const submitLogin = (evt: FormEvent) => {
+  //   evt.preventDefault();
+  //
+  //   dispatch(loginAction({
+  //     email: email,
+  //     password: password,
+  //   }));
+  //   setCurrentUser(true);
+  // };
   const updateFormBtn = () => {
     if (registrationToggle) {
       setRegistrationToggle(false);
