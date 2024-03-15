@@ -1,15 +1,18 @@
 /* eslint-disable */
-import {Button} from 'reactstrap';
-import {Form, FormGroup, Label, Input} from 'reactstrap';
-import {Link} from 'react-router-dom';
-import {Navbar, NavbarBrand, NavItem} from 'reactstrap';
-import {useAppDispatch} from '../../hooks';
-import {api} from '../../store'
-import {useEffect, useState, FormEvent} from 'react';
-import {loginAction} from '../../store/api-actions';
+import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
+import {Link, useNavigate} from 'react-router-dom';
+import { connect } from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {api, store} from '../../store';
+import {FormEvent, useEffect, useState} from 'react';
+import {loginAction, logoutAction} from '../../store/api-actions';
 import {userDataType} from '../../types/types';
+import {AppRoute, AuthorizationStatus} from '../../const';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
+
 
 function AuthScreen(): JSX.Element {
+  const navigate = useNavigate();
 
   const userInitData: userDataType = {
     user: {
@@ -18,6 +21,7 @@ function AuthScreen(): JSX.Element {
       isSuperUser: false,
     }
   };
+
   const dispatch = useAppDispatch();
 
   const [currentUser, setCurrentUser] = useState(true);
@@ -29,27 +33,21 @@ function AuthScreen(): JSX.Element {
   const [password, setPassword] = useState('');
   const [adminKey, setAdminKey] = useState('');
 
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  // store.dispatch(checkAuthAction());
   useEffect(() => {
-    api.get('/api/user')
-      .then((response) => {
-        setCurrentUser(true);
-        setUserData(response.data as userDataType);
-      })
-      .catch((error) => {
-        setCurrentUser(false);
-      });
-  }, []);
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      // navigate(AppRoute.Root);
+      setCurrentUser(true);
+    }
+    else setCurrentUser(false);
+
+  }, [authorizationStatus]);
   const submitLogout = (evt: FormEvent) => {
     evt.preventDefault();
-    // alert('Logged Out');
-    // setCurrentUser(false);
-    api.post(
-      '/api/logout',
-      {withCredentials: true}
-    ).then(() => {
-      setCurrentUser(false);
-    });
+    dispatch(logoutAction());
   };
+
   const submitRegistration = (evt: FormEvent) => {
     evt.preventDefault();
     api.post(
@@ -73,27 +71,15 @@ function AuthScreen(): JSX.Element {
       });
     });
   };
-  const submitLogin = (e: FormEvent) => {
-    e.preventDefault();
-    api.post(
-      '/api/login',
-      {
-        email: email,
-        password: password
-      }
-    ).then(() => {
-      setCurrentUser(true);
-    });
+
+  const submitLogin = (evt: FormEvent) => {
+    evt.preventDefault();
+    dispatch(loginAction({
+      email: email,
+      password: password,
+    }));
   };
-  // const submitLogin = (evt: FormEvent) => {
-  //   evt.preventDefault();
-  //
-  //   dispatch(loginAction({
-  //     email: email,
-  //     password: password,
-  //   }));
-  //   setCurrentUser(true);
-  // };
+
   const updateFormBtn = () => {
     if (registrationToggle) {
       setRegistrationToggle(false);
@@ -101,6 +87,8 @@ function AuthScreen(): JSX.Element {
       setRegistrationToggle(true);
     }
   };
+
+  // console.log(userInitData);
 
   if (currentUser) {
     return (

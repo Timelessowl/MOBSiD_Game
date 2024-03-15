@@ -9,6 +9,7 @@ export enum AppRoute {
 
 export enum APIRoute {
   Questions = '/api/questions',
+  User = '/api/user',
   Login = '/api/login',
   Logout = '/api/logout',
 }
@@ -16,12 +17,12 @@ export enum APIRoute {
 export enum AuthorizationStatus {
   Auth = 'AUTH',
   NoAuth = 'NO_AUTH',
-  SuperUserAuth = 'SUPER_USER_AUTH',
   Unknown = 'UNKNOWN',
 }
 
 
 export enum NameSpace {
+  AuthInfo = 'AUTH_INFO',
   Data = 'DATA',
   Game = 'GAME',
   User = 'USER',
