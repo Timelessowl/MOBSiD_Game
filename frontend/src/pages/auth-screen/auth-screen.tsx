@@ -1,20 +1,18 @@
 /* eslint-disable */
 import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {Link, useNavigate} from 'react-router-dom';
-import { connect } from 'react-redux';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {api, store} from '../../store';
 import {FormEvent, useEffect, useState} from 'react';
-import {loginAction, logoutAction} from '../../store/api-actions';
-import {userDataType} from '../../types/types';
+import {loginAction, logoutAction, registrationAction} from '../../store/api-actions';
 import {AppRoute, AuthorizationStatus} from '../../const';
-import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import {getAuthorizationStatus, getUserData} from '../../store/user-process/selectors';
+import {UserData} from '../../types/user-data';
 
 
 function AuthScreen(): JSX.Element {
   const navigate = useNavigate();
 
-  const userInitData: userDataType = {
+  const userInitData: UserData = {
     user: {
       email: '',
       username: '',
@@ -25,7 +23,7 @@ function AuthScreen(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const [currentUser, setCurrentUser] = useState(true);
-  const [userData, setUserData] = useState(userInitData);
+  const [currentUserData, setCurrentUserData] = useState(userInitData);
   const [superUserSwitch, setSuperUserSwitch] = useState(false);
   const [registrationToggle, setRegistrationToggle] = useState(false);
   const [email, setEmail] = useState('');
@@ -34,15 +32,17 @@ function AuthScreen(): JSX.Element {
   const [adminKey, setAdminKey] = useState('');
 
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  // store.dispatch(checkAuthAction());
+  const user = useAppSelector(getUserData);
+
   useEffect(() => {
     if (authorizationStatus === AuthorizationStatus.Auth) {
-      // navigate(AppRoute.Root);
       setCurrentUser(true);
     }
     else setCurrentUser(false);
+    console.log(user);
+    setCurrentUserData(user as UserData)
 
-  }, [authorizationStatus]);
+  }, [authorizationStatus, user?.user.username]);
   const submitLogout = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(logoutAction());
@@ -50,26 +50,13 @@ function AuthScreen(): JSX.Element {
 
   const submitRegistration = (evt: FormEvent) => {
     evt.preventDefault();
-    api.post(
-      '/api/register',
-      {
-        email: email,
-        username: username,
-        password: password,
-        isSuperuser: superUserSwitch,
-        adminKey: adminKey
-      }
-    ).then(() => {
-      api.post(
-        '/api/login',
-        {
-          email: email,
-          password: password
-        }
-      ).then(() => {
-        setCurrentUser(true);
-      });
-    });
+    dispatch(registrationAction({
+      email: email,
+      username: username,
+      password: password,
+      isSuperuser: superUserSwitch,
+      adminKey: adminKey
+    }));
   };
 
   const submitLogin = (evt: FormEvent) => {
@@ -88,14 +75,12 @@ function AuthScreen(): JSX.Element {
     }
   };
 
-  // console.log(userInitData);
-
   if (currentUser) {
     return (
       <div>
         <Navbar color='dark' dark>
           <NavbarBrand>MOBSiD Authentication</NavbarBrand>
-          {userData.user.isSuperUser ? <NavbarBrand>Admin</NavbarBrand> : <NavbarBrand>Student</NavbarBrand>}
+          {currentUserData.user.isSuperUser ? <NavbarBrand>Admin</NavbarBrand> : <NavbarBrand>Student</NavbarBrand>}
           <NavItem>
             <form onSubmit={submitLogout}>
               <Button type="submit" color='light' className="form_btn">Log Out</Button>

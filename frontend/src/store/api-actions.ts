@@ -1,9 +1,10 @@
+/* eslint-disable */
 import {AxiosInstance} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {AppDispatch, State} from '../types/state.js';
 import {Questions} from '../types/question';
 import {APIRoute} from '../const';
-import {AuthData} from '../types/auth-data';
+import {AuthData, RegisterData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
 
 
@@ -19,14 +20,29 @@ export const fetchQuestionAction = createAsyncThunk<Questions, undefined, {
   },
 );
 
-export const checkAuthAction = createAsyncThunk<void, undefined, {
+export const checkAuthAction = createAsyncThunk<UserData, undefined, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'user/checkAuth',
   async (_arg, {extra: api}) => {
-    await api.get(APIRoute.User);
+    const {data} = await api.get(APIRoute.User);
+    return data;
+  },
+);
+export const registrationAction = createAsyncThunk<void, RegisterData, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/register',
+  async ({email,username, password, isSuperuser, adminKey}, {dispatch, extra: api}) => {
+    await api.post(APIRoute.Register, {email, username, password, isSuperuser, adminKey});
+    dispatch(loginAction({
+      email: email,
+      password: password,
+    }));
   },
 );
 
@@ -37,8 +53,8 @@ export const loginAction = createAsyncThunk<void, AuthData, {
 }>(
   'user/login',
   async ({email, password}, {dispatch, extra: api}) => {
-    await api.post<UserData>(APIRoute.Login, {email, password});
-
+    await api.post(APIRoute.Login, {email, password});
+    dispatch(checkAuthAction());
   },
 );
 

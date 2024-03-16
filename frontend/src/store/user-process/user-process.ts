@@ -16,7 +16,7 @@ export const userProcess = createSlice({
     builder
       .addCase(checkAuthAction.fulfilled, (state, action) => {
         state.authorizationStatus = AuthorizationStatus.Auth;
-        // state.user = action.payload;
+        state.user = action.payload;
       })
       .addCase(checkAuthAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
