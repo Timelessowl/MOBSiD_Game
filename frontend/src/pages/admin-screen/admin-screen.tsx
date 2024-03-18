@@ -1,14 +1,28 @@
-import React, { useState } from 'react';
+/* eslint-disable */
+
+import React, {useEffect, useState} from 'react';
 import img from './Cmonya.png';
 import {Button, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
+import {useAppSelector} from '../../hooks';
+import {getUserData} from '../../store/user-process/selectors';
 
 
 const AdminScreen: React.FC = () => {
   const navigate = useNavigate();
+  const user = useAppSelector(getUserData);
+
   const [answers, setAnswers] = useState<string[]>(['', '', '']);
   const [question, setQuestion] = useState('');
+
+  // useEffect(() => {
+  //   if (user?.user.isSuperUser !== false) {
+  //     navigate(AppRoute.Auth);
+  //   }
+  //
+  // }, []);
+
 
   const handleChangeAnswer = (index: number, value: string) => {
     const newAnswers = [...answers];

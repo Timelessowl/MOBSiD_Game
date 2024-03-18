@@ -1,11 +1,22 @@
+/* eslint-disable */
 import AuthScreen from '../../pages/auth-screen/auth-screen';
-import {Fragment} from 'react';
+import Load from "../load/load";
 import GameScreen from '../../pages/game-screen/game-screen';
+import PrivateRoute from '../private-route/private-route';
+import NotFoundScreen from '../../pages/not-found-screen/not-found-screen';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import {useAppSelector} from '../../hooks';
+import {AuthorizationStatus} from "../../const";
+import AdminScreen from "../../pages/admin-screen/admin-screen";
 
-import {BrowserRouter, Route, Routes, Link} from 'react-router-dom';
-import AdminScreen from '../../pages/admin-screen/admin-screen';
 
 function App(): JSX.Element {
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  if (authorizationStatus === AuthorizationStatus.Unknown) {
+    return <Load/>;
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -13,19 +24,16 @@ function App(): JSX.Element {
           <Route index element={<GameScreen />} />
           <Route path='auth' element={<AuthScreen />}>
           </Route>
-          <Route path='admin' element={<AdminScreen />}>
+          <Route path='admin' element={
+            <PrivateRoute authorizationStatus={authorizationStatus}>
+              <AdminScreen/>
+            </PrivateRoute>
+          }>
           </Route>
         </Route>
-        <Route path="*" element={
-          <Fragment>
-            <h1>
-              404.
-              <br />
-              <small>Page not found</small>
-            </h1>
-            <Link to="/">Go to main page</Link>
-          </Fragment>
-        }
+        <Route
+          path="*"
+          element={<NotFoundScreen/>}
         />
       </Routes>
     </BrowserRouter>

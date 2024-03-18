@@ -6,12 +6,11 @@ import {store} from './store';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {checkAuthAction} from './store/api-actions';
 
-store.dispatch(checkAuthAction());
-
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
+store.dispatch(checkAuthAction());
 
 root.render(
   <React.StrictMode>

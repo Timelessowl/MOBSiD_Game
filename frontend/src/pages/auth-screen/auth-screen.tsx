@@ -6,24 +6,15 @@ import {FormEvent, useEffect, useState} from 'react';
 import {loginAction, logoutAction, registrationAction} from '../../store/api-actions';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {getAuthorizationStatus, getUserData} from '../../store/user-process/selectors';
-import {UserData} from '../../types/user-data';
 
 
 function AuthScreen(): JSX.Element {
   const navigate = useNavigate();
 
-  const userInitData: UserData = {
-    user: {
-      email: '',
-      username: '',
-      isSuperUser: false,
-    }
-  };
 
   const dispatch = useAppDispatch();
 
   const [currentUser, setCurrentUser] = useState(true);
-  const [currentUserData, setCurrentUserData] = useState(userInitData);
   const [superUserSwitch, setSuperUserSwitch] = useState(false);
   const [registrationToggle, setRegistrationToggle] = useState(false);
   const [email, setEmail] = useState('');
@@ -39,10 +30,9 @@ function AuthScreen(): JSX.Element {
       setCurrentUser(true);
     }
     else setCurrentUser(false);
-    console.log(user);
-    setCurrentUserData(user as UserData)
 
   }, [authorizationStatus, user?.user.username]);
+
   const submitLogout = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(logoutAction());
@@ -80,7 +70,7 @@ function AuthScreen(): JSX.Element {
       <div>
         <Navbar color='dark' dark>
           <NavbarBrand>MOBSiD Authentication</NavbarBrand>
-          {currentUserData.user.isSuperUser ? <NavbarBrand>Admin</NavbarBrand> : <NavbarBrand>Student</NavbarBrand>}
+          {user?.user.isSuperUser ? <NavbarBrand>Admin</NavbarBrand> : <NavbarBrand>Student</NavbarBrand>}
           <NavItem>
             <form onSubmit={submitLogout}>
               <Button type="submit" color='light' className="form_btn">Log Out</Button>
