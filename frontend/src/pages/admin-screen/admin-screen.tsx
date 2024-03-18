@@ -1,39 +1,36 @@
 /* eslint-disable */
-
-import React, {useEffect, useState} from 'react';
+import React, {FormEvent, useEffect, useState} from 'react';
 import img from './Cmonya.png';
-import {Button, Navbar, NavbarBrand, NavItem} from 'reactstrap';
+import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup, Input} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
+import {logoutAction} from "../../store/api-actions";
 
 
 const AdminScreen: React.FC = () => {
   const navigate = useNavigate();
   const user = useAppSelector(getUserData);
 
-  const [answers, setAnswers] = useState<string[]>(['', '', '']);
+  const [answer, setAnswer] = useState('');
   const [question, setQuestion] = useState('');
 
-  // useEffect(() => {
-  //   if (user?.user.isSuperUser !== false) {
-  //     navigate(AppRoute.Auth);
-  //   }
-  //
-  // }, []);
-
-
-  const handleChangeAnswer = (index: number, value: string) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = value;
-    setAnswers(newAnswers);
-  };
+  useEffect(() => {
+    if (!user?.user.isSuperUser) {
+      navigate(AppRoute.Auth);
+    }
+  }, []);
 
 
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
   );
+
+  const submitNewQuestion = (evt: FormEvent) => {
+    evt.preventDefault();
+    console.log('Here will be question handler')
+  };
 
   return (
     <div>
@@ -41,40 +38,40 @@ const AdminScreen: React.FC = () => {
         <Navbar color='dark' dark>
           <NavbarBrand>MOBSiD Game</NavbarBrand>
           <NavItem>
-            <Button onClick={handleAuthButtonClick} className="form_btn" variant="light">Log in</Button>
+            <Button onClick={handleAuthButtonClick} className="form_btn" variant="light">Authorisation</Button>
           </NavItem>
         </Navbar>
       </nav>
-      <div style={{ display: 'flex', height: 'calc(100vh - 3rem)' }}>
-        <div style={{ flex: 1, padding: '1rem' }}>
-          <h2>Question 1: 2? 2? 2? qwerty</h2>
-          <textarea
-            rows={10}
-            cols={70}
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-          <input
-            type="text"
-            value={answers[1]}
-            onChange={(e) => handleChangeAnswer(1, e.target.value)}
-          />
-          <h2>{question}</h2>
-          <input
-            type="text"
-            value={answers[1]}
-            onChange={(e) => handleChangeAnswer(1, e.target.value)}
-          />
-          <h2>Question 3:</h2>
-          <input
-            type="text"
-            value={answers[2]}
-            onChange={(e) => handleChangeAnswer(2, e.target.value)}
-          />
-          <button>Submit</button>
-        </div>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <img src={img} alt="Image" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+      <div style={{ display: 'flex', height: 'calc(100vh - 3rem)', paddingLeft: '3rem'}}>
+        <div style={{display: 'flex', alignItems: 'right', justifyContent: 'center', height: '50vh'}}>
+          <Form onSubmit={submitNewQuestion}>
+            <Label className="question">
+              Введите вопрос
+            </Label>
+            <FormGroup>
+              <textarea style={{ flex: 1, padding: '1rem' }}
+                rows={10}
+                cols={70}
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label className="answer">
+                Введите ответ на вопрос
+              </Label>
+              <Input
+                name="answer"
+                placeholder="Answer"
+                type="text"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+              />
+            </FormGroup>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
         </div>
       </div>
     </div>
