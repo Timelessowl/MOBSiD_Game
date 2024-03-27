@@ -8,6 +8,13 @@ env = environ.Env()
 environ.Env.read_env()
 
 
+class AppQuizManager(models.Manager):
+
+    def add_question(self, text, ans):
+        question = self.model(text=text, answer=ans)
+        question.save()
+        return question
+
 class AppUserManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
@@ -46,14 +53,14 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class QuesModel(models.Model):
-    question = models.CharField(max_length=200, null=True)
+class QuestionModel(models.Model):
+    text = models.CharField(max_length=200, null=True)
     op1 = models.CharField(max_length=200, null=True)
     op2 = models.CharField(max_length=200, null=True)
     op3 = models.CharField(max_length=200, null=True)
     op4 = models.CharField(max_length=200, null=True)
     op5 = models.CharField(max_length=200, null=True)
-    ans = models.CharField(max_length=200, null=True)
-
+    answer = models.CharField(max_length=200, null=True)
+    objects = AppQuizManager()
     def __str__(self):
-        return self.question
+        return self.text

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
+from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, AppAddQuestionSerializer
 from rest_framework import permissions, status
 from .validations import custom_validation, validate_email, validate_password
 
@@ -35,6 +35,16 @@ class UserLogin(APIView):
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class AppAddQuestion(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        data = request.data
+        serializer = AppAddQuestionSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.create(data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserLogout(APIView):
     permission_classes = (permissions.AllowAny,)

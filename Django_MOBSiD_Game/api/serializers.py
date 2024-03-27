@@ -1,8 +1,19 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.exceptions import ValidationError
-
+from .models import QuestionModel
 UserModel = get_user_model()
+
+
+class AppAddQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionModel
+        fields = '__all__'
+
+        def create(self, data):
+            question_object = QuestionModel.objects.add_question(text=data['text'], ans=data['answer'])
+            question_object.save()
+            return question_object
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
