@@ -1,8 +1,8 @@
 /* eslint-disable */
-import {AxiosInstance} from 'axios';
+import axios, {AxiosInstance} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {AppDispatch, State} from '../types/state.js';
-import {Questions} from '../types/question';
+import {Question, Questions} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
@@ -66,6 +66,22 @@ export const logoutAction = createAsyncThunk<void, undefined, {
   'user/logout',
   async (_arg, {dispatch, extra: api}) => {
     await api.post(APIRoute.Logout, {withCredentials: true});
+  },
+);
+
+export const addQuestionAction = createAsyncThunk<void, Question, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'data/addQuestion',
+  async (data, {dispatch, extra: api}) => {
+    await api.post(APIRoute.AddQuestion,
+      {
+      text: data.text,
+      answer: data.answer
+    });
   },
 );
 

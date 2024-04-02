@@ -4,13 +4,14 @@ import img from './Cmonya.png';
 import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup, Input} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
-import {useAppSelector} from '../../hooks';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
-import {logoutAction} from "../../store/api-actions";
+import {addQuestionAction, logoutAction} from "../../store/api-actions";
 
 
 const AdminScreen: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
 
   const [answer, setAnswer] = useState('');
@@ -29,7 +30,15 @@ const AdminScreen: React.FC = () => {
 
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
-    console.log('Here will be question handler')
+    dispatch(addQuestionAction({
+      text: question,
+      opt1: '',
+      opt2: '',
+      opt3: '',
+      opt4: '',
+      opt5: '',
+      answer: answer
+    }))
   };
 
   return (

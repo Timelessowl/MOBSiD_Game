@@ -37,14 +37,15 @@ class UserLogin(APIView):
 
 
 class AppAddQuestion(APIView):
-    permission_classes = (permissions.IsAuthenticated, )
-
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
     def post(self, request):
         data = request.data
         serializer = AppAddQuestionSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.create(data)
             return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserLogout(APIView):
     permission_classes = (permissions.AllowAny,)

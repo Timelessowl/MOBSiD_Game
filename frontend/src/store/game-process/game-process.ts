@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {isAnswerCorrect} from '../../game';
 import {NameSpace, FIRST_GAME_STEP} from '../../const';
 import {GameProcess} from '../../types/state';
-import {Question, UserAnswer} from '../../types/question';
+import {Question} from '../../types/question';
 
 const initialState: GameProcess = {
   mistakes: 0,
@@ -18,10 +18,10 @@ export const gameProcess = createSlice({
     incrementStep: (state) => {
       state.step = state.step + STEP_COUNT;
     },
-    checkUserAnswer: (state, action: PayloadAction<{question: Question; userAnswer: UserAnswer}>) => {
-      const {question, userAnswer} = action.payload;
+    checkUserAnswer: (state, action: PayloadAction<{question: Question}>) => {
+      const {question} = action.payload;
 
-      state.mistakes += Number(!isAnswerCorrect(question, userAnswer));
+      state.mistakes += Number(!isAnswerCorrect(question));
     },
     resetGame: (state) => {
       state.mistakes = 0;
