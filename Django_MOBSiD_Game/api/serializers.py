@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.exceptions import ValidationError
-from .models import QuestionModel
+from .models import *
+import json
+
 UserModel = get_user_model()
 
 
@@ -14,6 +16,24 @@ class AppAddQuestionSerializer(serializers.ModelSerializer):
             question_object = QuestionModel.objects.add_question(text=data['text'], ans=data['answer'])
             question_object.save()
             return question_object
+
+
+class AppQuestionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionModel
+        fields = ('text', 'op1', 'op2', 'op3', 'op4', 'op5', 'answer')
+
+
+class UserProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsersProgress
+        fields = ('position', 'progress')
+
+    def reset_progress(self):
+        progress_obj = UsersProgress.objects.get(user_id=1)
+        progress_obj.position = 0
+        progress_obj.progress = json.dumps([1, {"isAnsCor":'no', 'Tries':5}])
+        progress_obj.save()
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -50,3 +70,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ('email', 'username', 'isSuperUser')
+

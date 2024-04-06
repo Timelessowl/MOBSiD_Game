@@ -15,6 +15,7 @@ class AppQuizManager(models.Manager):
         question.save()
         return question
 
+
 class AppUserManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
@@ -38,6 +39,8 @@ class AppUserManager(BaseUserManager):
         user.isSuperUser = True
         user.save()
         return user
+
+
 
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
@@ -64,3 +67,17 @@ class QuestionModel(models.Model):
     objects = AppQuizManager()
     def __str__(self):
         return self.text
+
+
+class UsersProgress(models.Model):
+    user_id = models.OneToOneField(
+        AppUser,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    position = models.IntegerField(default=0)
+    progress = models.JSONField()
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.user_id

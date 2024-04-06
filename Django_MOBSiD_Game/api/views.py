@@ -2,9 +2,10 @@ from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, AppAddQuestionSerializer
+from .serializers import *
 from rest_framework import permissions, status
 from .validations import custom_validation, validate_email, validate_password
+from .models import *
 
 
 class UserRegister(APIView):
@@ -36,17 +37,6 @@ class UserLogin(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AppAddQuestion(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
-    def post(self, request):
-        data = request.data
-        serializer = AppAddQuestionSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.create(data)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class UserLogout(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
@@ -64,3 +54,34 @@ class UserView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
+
+class AppAddQuestion(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+        data = request.data
+        serializer = AppAddQuestionSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.create(data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AppQuestions(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def get(self, request):
+        serializer = AppQuestionsSerializer(QuestionModel.objects.all(), many=True)
+        return Response(serializer.data)
+
+
+class UserProgress(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def get(self, request):
+        serializer = UserProgressSerializer(UsersProgress.objects.get(user_id=1))
+        serializer.reset_progress()
+        return Response(serializer.data)
