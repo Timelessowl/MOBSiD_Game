@@ -4,18 +4,22 @@ import App from './components/app/app';
 import {Provider} from 'react-redux';
 import {store} from './store';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {checkAuthAction} from './store/api-actions';
+import {fetchQuestionAction,checkAuthAction} from './store/api-actions';
+import { CookiesProvider } from 'react-cookie';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
+store.dispatch(fetchQuestionAction());
 store.dispatch(checkAuthAction());
 
 root.render(
   <React.StrictMode>
     <Provider store = {store}>
-      <App />
+      <CookiesProvider defaultSetOptions={{ path: '/' }}>
+        <App />
+      </CookiesProvider>
     </Provider>
   </React.StrictMode>,
 );

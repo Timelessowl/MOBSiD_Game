@@ -1,8 +1,3 @@
-// export type UserData = {
-//   id: number;
-//   email: string;
-//   token: string;
-// };
 
 export type userType = {
   email: string;
@@ -11,4 +6,9 @@ export type userType = {
 }
 export type UserData = {
   user: userType;
+};
+
+export type UserProgress = {
+  position: number;
+  progress: string;
 };

@@ -2,10 +2,10 @@
 import axios, {AxiosInstance} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {AppDispatch, State} from '../types/state.js';
-import {Question, Questions} from '../types/question';
+import {Question, Questions, CheckAnsData} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
-import {UserData} from '../types/user-data';
+import {UserData, UserProgress} from '../types/user-data';
 
 
 export const fetchQuestionAction = createAsyncThunk<Questions, undefined, {
@@ -53,7 +53,7 @@ export const loginAction = createAsyncThunk<void, AuthData, {
 }>(
   'user/login',
   async ({email, password}, {dispatch, extra: api}) => {
-    await api.post(APIRoute.Login, {email, password});
+   await api.post(APIRoute.Login, {email, password});
     dispatch(checkAuthAction());
   },
 );
@@ -82,6 +82,26 @@ export const addQuestionAction = createAsyncThunk<void, Question, {
       text: data.text,
       answer: data.answer
     });
+  },
+);
+
+export const checkUserAnswer = createAsyncThunk<UserProgress, CheckAnsData, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'data/checkUserAnswer',
+  async ({questionId, userAnswer}, {dispatch, extra: api}) => {
+    const {data} = await api.post(APIRoute.CheckAnswer,
+      {
+        id: questionId,
+        answer: userAnswer
+      });
+    console.log('Unparsed:', data)
+    console.log('Parsed:', JSON.parse(data[1]))
+
+    return data;
   },
 );
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {isAnswerCorrect} from '../../game';
 import {NameSpace, FIRST_GAME_STEP} from '../../const';
@@ -5,7 +6,7 @@ import {GameProcess} from '../../types/state';
 import {Question} from '../../types/question';
 
 const initialState: GameProcess = {
-  mistakes: 0,
+  position: 0,
   step: FIRST_GAME_STEP,
 };
 
@@ -18,16 +19,12 @@ export const gameProcess = createSlice({
     incrementStep: (state) => {
       state.step = state.step + STEP_COUNT;
     },
-    checkUserAnswer: (state, action: PayloadAction<{question: Question}>) => {
-      const {question} = action.payload;
 
-      state.mistakes += Number(!isAnswerCorrect(question));
-    },
     resetGame: (state) => {
-      state.mistakes = 0;
+      state.position = 0;
       state.step = FIRST_GAME_STEP;
     },
   },
 });
 
-export const {incrementStep, checkUserAnswer, resetGame} = gameProcess.actions;
+export const {incrementStep, resetGame} = gameProcess.actions;

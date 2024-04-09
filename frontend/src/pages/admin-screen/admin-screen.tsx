@@ -1,12 +1,11 @@
-/* eslint-disable */
+
 import React, {FormEvent, useEffect, useState} from 'react';
-import img from './Cmonya.png';
 import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup, Input} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
-import {addQuestionAction, logoutAction} from "../../store/api-actions";
+import {addQuestionAction} from '../../store/api-actions';
 
 
 const AdminScreen: React.FC = () => {
@@ -21,7 +20,7 @@ const AdminScreen: React.FC = () => {
     if (!user?.user.isSuperUser) {
       navigate(AppRoute.Auth);
     }
-  }, []);
+  });
 
 
   const handleAuthButtonClick = () => (
@@ -31,6 +30,7 @@ const AdminScreen: React.FC = () => {
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(addQuestionAction({
+      id: 0,
       text: question,
       opt1: '',
       opt2: '',
@@ -38,7 +38,7 @@ const AdminScreen: React.FC = () => {
       opt4: '',
       opt5: '',
       answer: answer
-    }))
+    }));
   };
 
   return (

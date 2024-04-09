@@ -10,7 +10,7 @@ export type GameData = {
 };
 
 export type GameProcess = {
-  mistakes: number;
+  position: number;
   step: number;
 };
 

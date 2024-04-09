@@ -14,7 +14,8 @@ export enum APIRoute {
   Login = '/api/login',
   Register = '/api/register',
   Logout = '/api/logout',
-  AddQuestion = 'api/add-question',
+  AddQuestion = '/api/add-question',
+  CheckAnswer = '/api/check-answer',
 }
 
 export enum AuthorizationStatus {

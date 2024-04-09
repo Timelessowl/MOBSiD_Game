@@ -7,30 +7,45 @@ import json
 UserModel = get_user_model()
 
 
-class AppAddQuestionSerializer(serializers.ModelSerializer):
+class AppQuestionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionModel
         fields = '__all__'
 
-        def create(self, data):
-            question_object = QuestionModel.objects.add_question(text=data['text'], ans=data['answer'])
-            question_object.save()
-            return question_object
+    def add_new(self, data):
+        question_object = QuestionModel(text=data['text'], answer=data['answer'])
+        question_object.save()
+        return question_object
 
+    def checkAnswer(self, user_data, ques_data):
+        question_obj = QuestionModel.objects.get(id=ques_data['id'])
+        user_obj = UserModel.objects.get(email=user_data.email)
+        if user_obj.progress != "":
+            progress = dict(json.loads(user_obj.progress))
+            if str(ques_data['id']) not in progress:
+                progress.update({str(ques_data['id']): [0, 0]})
+        else:
+            progress = {str(ques_data['id']): [0, 0]}
+        if not (progress[str(ques_data['id'])][0]):
 
-class AppQuestionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = QuestionModel
-        fields = ('text', 'op1', 'op2', 'op3', 'op4', 'op5', 'answer')
+            progress[str(ques_data['id'])][1] += 1
+            if question_obj.answer == ques_data['answer']:
+                user_obj.position += 1
+                progress[str(ques_data['id'])][0] = 1
+
+            user_obj.progress = json.dumps(progress)
+            user_obj.save()
+
+        return [user_obj.position, user_obj.progress]
 
 
 class UserProgressSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UsersProgress
+        model = UserModel
         fields = ('position', 'progress')
 
     def reset_progress(self):
-        progress_obj = UsersProgress.objects.get(user_id=1)
+        progress_obj = UserModel.objects.get(user_id=1)
         progress_obj.position = 0
         progress_obj.progress = json.dumps([1, {"isAnsCor":'no', 'Tries':5}])
         progress_obj.save()

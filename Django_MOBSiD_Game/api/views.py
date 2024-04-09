@@ -57,14 +57,13 @@ class UserView(APIView):
 
 
 class AppAddQuestion(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
-        data = request.data
-        serializer = AppAddQuestionSerializer(data=data)
+        serializer = AppQuestionsSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.create(data)
+            serializer.add_new(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -74,14 +73,23 @@ class AppQuestions(APIView):
 
     def get(self, request):
         serializer = AppQuestionsSerializer(QuestionModel.objects.all(), many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AppCheckAnswer(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = AppQuestionsSerializer(data=request.data)
+        return Response(serializer.checkAnswer(user_data=request.user, ques_data=request.data), status=status.HTTP_200_OK)
 
 
 class UserProgress(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
-        serializer = UserProgressSerializer(UsersProgress.objects.get(user_id=1))
-        serializer.reset_progress()
+        serializer = UserProgressSerializer(AppUser.objects.get(user_id=1))
         return Response(serializer.data)
+

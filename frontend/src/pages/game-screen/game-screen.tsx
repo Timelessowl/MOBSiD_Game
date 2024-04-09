@@ -1,24 +1,56 @@
-import React, { useState } from 'react';
+/* eslint-disable */
+import React, {FormEvent, useState} from 'react';
 import img from './Cmonya.png';
-import {Button, Navbar, NavbarBrand, NavItem} from 'reactstrap';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {getQuestions} from '../../store/game-data/selectors';
+import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
+import {Question} from '../../types/question';
+import {checkUserAnswer} from "../../store/api-actions";
+import {getPosition} from "../../store/game-process/selectors";
+
+
 
 
 const GameScreen: React.FC = () => {
-  const navigate = useNavigate();
-  const [answers, setAnswers] = useState<string[]>(['', '', '']);
+  const emptyQuestion: Question = {
+    id: -1,
+    text: 'No such question',
+    opt1:'',
+    opt2:'',
+    opt3:'',
+    opt4:'',
+    opt5:'',
+    answer:''
 
-  const handleChangeAnswer = (index: number, value: string) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = value;
-    setAnswers(newAnswers);
   };
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const questions = useAppSelector(getQuestions);
+  const [answer, setAnswer] = useState('');
+  const [questionIndex, setQuestionIndex] = useState(-1);
+  const [prevQuestionIndex, setPrevQuestionIndex] = useState(-1);
+  const [currQuestion, setCurrQuestion] = useState<Question>(emptyQuestion);
 
+  if (questionIndex === -1 && questions[0] !== undefined) {
+    setQuestionIndex(0);
+  }
+  if (prevQuestionIndex !== questionIndex){
+    setCurrQuestion(questions[questionIndex]);
+    setPrevQuestionIndex(questionIndex);
+  }
 
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
   );
+  const submitAnswer = (evt: FormEvent) => {
+    evt.preventDefault();
+    dispatch(checkUserAnswer({
+      questionId: questions[0].id,
+      userAnswer: currQuestion.answer,
+    }))
+  };
 
   return (
     <div>
@@ -26,31 +58,32 @@ const GameScreen: React.FC = () => {
         <Navbar color='dark' dark>
           <NavbarBrand>MOBSiD Game</NavbarBrand>
           <NavItem>
-            <Button onClick={handleAuthButtonClick} className="form_btn" variant="light">Log in</Button>
+            <Button onClick={handleAuthButtonClick} className="form_btn" variant="light">Authorisation</Button>
           </NavItem>
         </Navbar>
       </nav>
-      <div style={{ display: 'flex', height: 'calc(100vh - 3rem)' }}>
-        <div style={{ flex: 1, padding: '1rem' }}>
-          <h2>Question 1:</h2>
-          <input
-            type="text"
-            value={answers[0]}
-            onChange={(e) => handleChangeAnswer(0, e.target.value)}
-          />
-          <h2>Question 2:</h2>
-          <input
-            type="text"
-            value={answers[1]}
-            onChange={(e) => handleChangeAnswer(1, e.target.value)}
-          />
-          <h2>Question 3:</h2>
-          <input
-            type="text"
-            value={answers[2]}
-            onChange={(e) => handleChangeAnswer(2, e.target.value)}
-          />
-          <button>Submit</button>
+      <div style={{ display: 'flex', height: 'calc(100vh - 3rem)', paddingLeft: '3rem'}}>
+        <div style={{display: 'flex', alignItems: 'right', justifyContent: 'center', height: '50vh'}}>
+          <Form onSubmit={submitAnswer}>
+            <Label className='question'>
+              {currQuestion.text}
+            </Label>
+            <FormGroup>
+              <Label className="answer">
+                Введите ответ на вопрос
+              </Label>
+              <Input
+                name="answer"
+                placeholder="Answer"
+                type="text"
+                value={answer}
+                onChange={(e) => currQuestion.answer = (e.target.value)}
+              />
+            </FormGroup>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
         </div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <img src={img} alt="Image" style={{ maxWidth: '100%', maxHeight: '100%' }} />

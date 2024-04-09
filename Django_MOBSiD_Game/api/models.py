@@ -8,14 +8,6 @@ env = environ.Env()
 environ.Env.read_env()
 
 
-class AppQuizManager(models.Manager):
-
-    def add_question(self, text, ans):
-        question = self.model(text=text, answer=ans)
-        question.save()
-        return question
-
-
 class AppUserManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
@@ -41,13 +33,13 @@ class AppUserManager(BaseUserManager):
         return user
 
 
-
-
 class AppUser(AbstractBaseUser, PermissionsMixin):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
     isSuperUser = models.BooleanField(default=False)
+    position = models.IntegerField(default=0)
+    progress = models.JSONField(default='')
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     objects = AppUserManager()
@@ -64,20 +56,7 @@ class QuestionModel(models.Model):
     op4 = models.CharField(max_length=200, null=True)
     op5 = models.CharField(max_length=200, null=True)
     answer = models.CharField(max_length=200, null=True)
-    objects = AppQuizManager()
+    objects = models.Manager()
     def __str__(self):
         return self.text
 
-
-class UsersProgress(models.Model):
-    user_id = models.OneToOneField(
-        AppUser,
-        on_delete=models.CASCADE,
-        primary_key=True,
-    )
-    position = models.IntegerField(default=0)
-    progress = models.JSONField()
-    objects = models.Manager()
-
-    def __str__(self):
-        return self.user_id

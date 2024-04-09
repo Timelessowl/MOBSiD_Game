@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import environ
+
+
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()
@@ -34,11 +36,12 @@ ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost',
+    'http://localhost:3000',
     'http://127.0.0.1',
     'http://127.0.0.1:3000',
     'http://0.0.0.0',
 ]
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000']
 CSRF_COOKIE_NAME = "X-CSRFToken"
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
@@ -47,6 +50,8 @@ SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_HTTPONLY = False
 
 
 # Application definition
