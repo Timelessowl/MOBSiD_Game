@@ -23,8 +23,8 @@ const GameScreen: React.FC = () => {
     opt4:'',
     opt5:'',
     answer:''
-
   };
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const questions = useAppSelector(getQuestions);
@@ -47,9 +47,19 @@ const GameScreen: React.FC = () => {
   const submitAnswer = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(checkUserAnswer({
-      questionId: questions[0].id,
-      userAnswer: currQuestion.answer,
+      questionId: questions[questionIndex].id,
+      userAnswer: answer,
     }))
+  };
+
+  const handlePrevious = (evt: FormEvent) => {
+    evt.preventDefault();
+    setQuestionIndex(questionIndex - 1);
+  };
+
+  const handleNext = (evt: FormEvent) => {
+    evt.preventDefault();
+    setQuestionIndex(questionIndex + 1);
   };
 
   return (
@@ -77,7 +87,9 @@ const GameScreen: React.FC = () => {
                 placeholder="Answer"
                 type="text"
                 value={answer}
-                onChange={(e) => currQuestion.answer = (e.target.value)}
+                onChange={(e) => setAnswer(e.target.value)
+                }
+
               />
             </FormGroup>
             <Button variant="primary" type="submit">
@@ -85,6 +97,20 @@ const GameScreen: React.FC = () => {
             </Button>
           </Form>
         </div>
+      <div>
+        < Button variant="primary"
+          onClick={handlePrevious}
+          disabled={!(questionIndex>0)}
+        >
+          Предыдущий
+        </Button>
+        < Button variant="primary"
+          onClick={handleNext}
+          disabled={questions[questionIndex+1] === undefined}
+        >
+          Следующий
+        </Button>
+      </div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <img src={img} alt="Image" style={{ maxWidth: '100%', maxHeight: '100%' }} />
         </div>
