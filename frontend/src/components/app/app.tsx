@@ -2,6 +2,8 @@
 import AuthScreen from '../../pages/auth-screen/auth-screen';
 import Load from "../load/load";
 import GameScreen from '../../pages/game-screen/game-screen';
+import QuestionsScreen from '../../pages/game-screen/questions-screen';
+
 import PrivateRoute from '../private-route/private-route';
 import NotFoundScreen from '../../pages/not-found-screen/not-found-screen';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
@@ -21,7 +23,7 @@ function App(): JSX.Element {
     <BrowserRouter>
       <Routes>
         <Route path='/'>
-          <Route index element={<GameScreen />} />
+          <Route index element={<><QuestionsScreen/><GameScreen/></>} />
           <Route path='auth' element={<AuthScreen />}>
           </Route>
           <Route path='admin' element={

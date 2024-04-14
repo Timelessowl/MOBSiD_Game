@@ -45,10 +45,11 @@ class UserProgressSerializer(serializers.ModelSerializer):
         fields = ('position', 'progress')
 
     def reset_progress(self):
-        progress_obj = UserModel.objects.get(user_id=1)
-        progress_obj.position = 0
-        progress_obj.progress = json.dumps([1, {"isAnsCor":'no', 'Tries':5}])
-        progress_obj.save()
+        pass
+
+    def get_progress(self, user_data):
+        user_obj = UserModel.objects.get(email=user_data.email)
+        return {'position': user_obj.position, 'progress': user_obj.progress}
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):

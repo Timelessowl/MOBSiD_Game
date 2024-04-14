@@ -1,13 +1,14 @@
 /* eslint-disable */
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 import {isAnswerCorrect} from '../../game';
-import {NameSpace, FIRST_GAME_STEP} from '../../const';
-import {GameProcess} from '../../types/state';
+import {NameSpace, FIRST_GAME_STEP, AuthorizationStatus} from '../../const';
+import {GameProgress} from '../../types/state';
 import {Question} from '../../types/question';
+import {checkUserAnswer, getUserProgress} from "../api-actions";
 
-const initialState: GameProcess = {
+const initialState: GameProgress = {
   position: 0,
-  step: FIRST_GAME_STEP,
+  progress: '',
 };
 
 const STEP_COUNT = 1;
@@ -15,16 +16,25 @@ const STEP_COUNT = 1;
 export const gameProcess = createSlice({
   name: NameSpace.Game,
   initialState,
-  reducers: {
-    incrementStep: (state) => {
-      state.step = state.step + STEP_COUNT;
-    },
-
-    resetGame: (state) => {
-      state.position = 0;
-      state.step = FIRST_GAME_STEP;
-    },
-  },
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      // .addCase(checkUserAnswer.fulfilled, (state, action) => {
+      //   state.position = action.payload.position;
+      //   state.progress = action.payload.progress;
+      // })
+      // .addCase(checkUserAnswer.rejected, (state) => {
+      //   state.authorizationStatus = AuthorizationStatus.NoAuth;
+      // })
+      .addCase(getUserProgress.fulfilled, (state, action) => {
+        state.position = action.payload.position;
+        state.progress = action.payload.progress;
+      })
+      // .addCase(loginAction.rejected, (state) => {
+      //   state.authorizationStatus = AuthorizationStatus.NoAuth;
+      // })
+      // .addCase(logoutAction.fulfilled, (state) => {
+      //   state.authorizationStatus = AuthorizationStatus.NoAuth;
+      // });
+  }
 });
-
-export const {incrementStep, resetGame} = gameProcess.actions;

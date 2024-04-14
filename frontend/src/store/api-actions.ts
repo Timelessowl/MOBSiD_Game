@@ -5,7 +5,8 @@ import {AppDispatch, State} from '../types/state.js';
 import {Question, Questions, CheckAnsData} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
-import {UserData, UserProgress} from '../types/user-data';
+import {UserData} from '../types/user-data';
+import {GameProgress} from '../types/state'
 
 
 export const fetchQuestionAction = createAsyncThunk<Questions, undefined, {
@@ -85,7 +86,7 @@ export const addQuestionAction = createAsyncThunk<void, Question, {
   },
 );
 
-export const checkUserAnswer = createAsyncThunk<UserProgress, CheckAnsData, {
+export const checkUserAnswer = createAsyncThunk<void, CheckAnsData, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance,
@@ -93,15 +94,25 @@ export const checkUserAnswer = createAsyncThunk<UserProgress, CheckAnsData, {
 }>(
   'data/checkUserAnswer',
   async ({questionId, userAnswer}, {dispatch, extra: api}) => {
-    const {data} = await api.post(APIRoute.CheckAnswer,
+      await api.post(APIRoute.CheckAnswer,
       {
         id: questionId,
         answer: userAnswer
       });
-    console.log('Unparsed:', data)
-    console.log('Parsed:', JSON.parse(data[1]))
-
-    return data;
+      dispatch(getUserProgress);
   },
 );
 
+export const getUserProgress = createAsyncThunk<GameProgress, undefined, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'user/progress',
+  async (_arg, {extra: api}) => {
+    const {data} = await api.get(APIRoute.Progress);
+    // console.log(data)
+    return data;
+  },
+);

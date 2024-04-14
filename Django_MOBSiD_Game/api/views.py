@@ -90,6 +90,6 @@ class UserProgress(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
-        serializer = UserProgressSerializer(AppUser.objects.get(user_id=1))
-        return Response(serializer.data)
+        serializer = UserProgressSerializer(request.user)
+        return Response(serializer.get_progress(user_data=request.user))
 

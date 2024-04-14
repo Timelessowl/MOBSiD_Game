@@ -8,7 +8,4 @@ export type UserData = {
   user: userType;
 };
 
-export type UserProgress = {
-  position: number;
-  progress: string;
-};
+

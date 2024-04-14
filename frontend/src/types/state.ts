@@ -9,9 +9,9 @@ export type GameData = {
   hasError: boolean;
 };
 
-export type GameProcess = {
+export type GameProgress = {
   position: number;
-  step: number;
+  progress: string;
 };
 
 export type UserProcess = {

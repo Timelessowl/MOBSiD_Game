@@ -1,12 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+./project/
 
 # dependencies
 /.pnp
 .pnp.js
 /frontend/node_modules/
 /Django_MOBSiD_Game/node_modules/
-/project/public
-
 # testing
 /coverage
 
@@ -143,5 +142,6 @@ GitHub.sublime-settings
 .history
 
 /node_modules/
-/project/
 
+
+/project/public/
