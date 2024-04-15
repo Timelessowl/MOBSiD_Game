@@ -10,6 +10,7 @@ export type GameData = {
 };
 
 export type GameProgress = {
+  loading: boolean;
   position: number;
   progress: string;
 };

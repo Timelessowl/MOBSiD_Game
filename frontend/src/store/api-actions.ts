@@ -112,7 +112,7 @@ export const getUserProgress = createAsyncThunk<GameProgress, undefined, {
   'user/progress',
   async (_arg, {extra: api}) => {
     const {data} = await api.get(APIRoute.Progress);
-    // console.log(data)
     return data;
+
   },
 );
