@@ -13,7 +13,15 @@ class AppQuestionsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def add_new(self, data):
-        question_object = QuestionModel(text=data['text'], answer=data['answer'])
+        question_object = QuestionModel(text=data['text'],
+                                        withOptions=data['withOptions'],
+                                        answer=data['answer'],
+                                        opt1=data['opt1'],
+                                        opt2=data['opt2'],
+                                        opt3=data['opt3'],
+                                        opt4=data['opt4'],
+                                        opt5=data['opt5'],
+                                        )
         question_object.save()
         return question_object
 

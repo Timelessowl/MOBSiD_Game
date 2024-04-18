@@ -21,6 +21,7 @@ const QuestionsScreen: React.FC = () => {
   const emptyQuestion: Question = {
     id: -1,
     text: 'No such question',
+    withOptions: false,
     opt1:'',
     opt2:'',
     opt3:'',

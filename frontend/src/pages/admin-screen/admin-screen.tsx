@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 import React, {FormEvent, useEffect, useState} from 'react';
 import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup, Input} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
@@ -12,9 +12,10 @@ const AdminScreen: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
-
   const [answer, setAnswer] = useState('');
   const [question, setQuestion] = useState('');
+  const [OptionsSwitch, setOptionsSwitch] = useState(false);
+  const [Options, setOptions] = useState(['', '', '', '', '']);
 
   useEffect(() => {
     if (!user?.user.isSuperUser) {
@@ -27,19 +28,32 @@ const AdminScreen: React.FC = () => {
     navigate(AppRoute.Auth)
   );
 
+  function handleOptionChange(index: number, newOpt: string) {
+    const nextCounters = Options.map((opt, i) => {
+      if (i === index) {
+        return newOpt;
+      } else {
+        return opt;
+      }
+    });
+    setOptions(nextCounters);
+  }
+
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(addQuestionAction({
       id: 0,
       text: question,
-      opt1: '',
-      opt2: '',
-      opt3: '',
-      opt4: '',
-      opt5: '',
+      withOptions: OptionsSwitch,
+      opt1: Options[0],
+      opt2: Options[1],
+      opt3: Options[2],
+      opt4: Options[3],
+      opt5: Options[4],
       answer: answer
     }));
   };
+
 
   return (
     <div>
@@ -65,22 +79,67 @@ const AdminScreen: React.FC = () => {
                 onChange={(e) => setQuestion(e.target.value)}
               />
             </FormGroup>
-            <FormGroup>
-              <Label className="answer">
-                Введите ответ на вопрос
-              </Label>
+            <FormGroup switch>
               <Input
-                name="answer"
-                placeholder="Answer"
-                type="text"
+                type="switch"
+                checked={OptionsSwitch}
+                onClick={() => {
+                  setOptionsSwitch(!OptionsSwitch);
+                }}
+              />
+              <Label check>С вариантами ответа</Label>
+            </FormGroup>
+            {
+              OptionsSwitch ? [Options.map((option, i) => {
+                return(
+                <Input key={i}
+                    name={"opt "+ String(i+1)}
+                    placeholder={"Option "+ String(i+1)}
+                    type="text"
+                    value={Options[i]}
+                    onChange={(e) => handleOptionChange(i, e.target.value)}
+                    style={{marginBottom: '7px'}}
+                  />
+                )
+                }),
+                <Label className="answerSelect">
+                Выберите правильный вариант
+                </Label> ,
+                <Input
+                id="answerSelect"
+                name="answerSelect"
+                type="select"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
-              />
-            </FormGroup>
+              >
+                  {Options.map((option) => {
+                    return( <option>{option}</option>
+                    )
+                  })}
+              </Input>
+              ] : (
+                <FormGroup>
+                  <Label className="answer">
+                    Введите ответ на вопрос
+                  </Label>
+                  <Input
+                    name="answer"
+                    placeholder="Answer"
+                    type="text"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                  />
+                </FormGroup>
+              )
+            }
+
             <Button variant="primary" type="submit">
               Submit
             </Button>
           </Form>
+        </div>
+        <div>
+          <input type='file' multiple accept="image/*" />
         </div>
       </div>
     </div>

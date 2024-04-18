@@ -80,8 +80,15 @@ export const addQuestionAction = createAsyncThunk<void, Question, {
   async (data, {dispatch, extra: api}) => {
     await api.post(APIRoute.AddQuestion,
       {
-      text: data.text,
-      answer: data.answer
+        text: data.text,
+        withOptions: data.withOptions,
+        opt1:data.opt1,
+        opt2:data.opt2,
+        opt3:data.opt3,
+        opt4:data.opt4,
+        opt5:data.opt5,
+        answer: data.answer
+
     });
   },
 );

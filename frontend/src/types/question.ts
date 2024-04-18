@@ -1,6 +1,7 @@
 export type Question = {
   id: number;
   text: string;
+  withOptions: boolean;
   opt1: string;
   opt2: string;
   opt3: string;

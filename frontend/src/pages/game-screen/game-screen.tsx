@@ -1,5 +1,4 @@
 /* eslint-disable */
-import styles from './Component.module.css'
 import React, {FormEvent, useEffect, useState} from 'react';
 import img from './Cmonya.png';
 import playerLogo from './player.png'
@@ -68,7 +67,7 @@ const GameScreen: React.FC = () => {
 
   return (
 
-    <div style={{float: "right", width:"50%", height:'100%', position:'fixed', right:"0", top:"20px"}}>
+    <div style={{float: "right", width:"50%", height:'100%', position:'fixed', right:"0", top:"30px"}}>
       <Button onClick={()=> setPositionH(positionH+1)}>D</Button>
       <Button onClick={()=> setPositionH(positionH-1)}>A</Button>
       <Button onClick={()=> setPositionV(positionV+1)}>S</Button>
