@@ -1,20 +1,14 @@
-/* eslint-disable */
 import React, {FormEvent, useState} from 'react';
-import img from './Cmonya.png';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getQuestions} from '../../store/game-data/selectors';
 import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {Question} from '../../types/question';
-import {checkUserAnswer} from "../../store/api-actions";
-import {getLoading, getPosition, getProgress} from "../../store/game-process/selectors";
-import {getUserData} from "../../store/user-process/selectors";
-import Load from "../../components/load/load";
-
-
-
-
+import {JSONObject} from '../../types/types';
+import {checkUserAnswer} from '../../store/api-actions';
+import {getLoading, getProgress} from '../../store/game-process/selectors';
+import Load from '../../components/load/load';
 
 
 const QuestionsScreen: React.FC = () => {
@@ -43,13 +37,15 @@ const QuestionsScreen: React.FC = () => {
   if (useAppSelector(getLoading)){
     return <Load/>;
   }
-  const progress_parsed = JSON.parse(progress);
-  var successLabel: string;
-  var triesLabel: string;
+  const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
+  const progressParsed = JSON.parse(progress) as JSONObject;
+  let successLabel: string;
+  let triesLabel: string;
 
-  if (progress_parsed[currQuestion.id] !== undefined){
-    successLabel = progress_parsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ': '';
-    triesLabel = 'Использованно '+String(progress_parsed[currQuestion.id][1])+' попыток';
+
+  if (progressParsed[currQuestion.id] !== undefined){
+    successLabel = progressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
+    triesLabel = `Использованно ${progressParsed[currQuestion.id][1] as number} попыток`;
   }
   else {
     successLabel = '';
@@ -72,7 +68,7 @@ const QuestionsScreen: React.FC = () => {
     dispatch(checkUserAnswer({
       questionId: questions[questionIndex].id,
       userAnswer: answer,
-    }))
+    }));
   };
 
   const handlePrevious = (evt: FormEvent) => {
@@ -85,6 +81,10 @@ const QuestionsScreen: React.FC = () => {
     setQuestionIndex(questionIndex + 1);
   };
 
+  const disableSubmit = () : boolean|undefined=>
+    (progressParsed[currQuestion.id] !== undefined ? (answer === '' ||
+      progressParsed[currQuestion.id][0] as boolean) : answer === '');
+
   return (
     <div>
       <nav style={{marginBottom: '1rem' }}>
@@ -95,32 +95,57 @@ const QuestionsScreen: React.FC = () => {
           </NavItem>
         </Navbar>
       </nav>
-      <div style={{float: "left", width:"50%"}}>
+      <div style={{float: 'left', width:'50%'}}>
         <div style={{ display: 'block', height: 'calc(100vh - 3rem)', paddingLeft: '3rem'}}>
           <div style={{display: 'block', alignItems: 'right', justifyContent: 'center', height: '50vh'}}>
             <Form onSubmit={submitAnswer}>
               <Label className='question'>
                 {currQuestion.text}
               </Label>
-              <FormGroup>
-                <Label className="answer">
-                  Введите ответ на вопрос
-                </Label>
-                <Input
-                  name="answer"
-                  placeholder="Answer"
-                  type="text"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)
-                  }
-                  style={{maxWidth:'50%'}}
+              {currQuestion.withOptions ?
+                (
+                  <FormGroup tag="fieldset">
+                    <legend>
+                      Выберите правильный вариант ответа
+                    </legend>
+                    {
+                      [currQuestion.opt1, currQuestion.opt2, currQuestion.opt3,
+                        currQuestion.opt4, currQuestion.opt5].map((option, i)=>
+                        (
+                          <FormGroup check key={uuid[i]}>
+                            <Input
+                              name='options'
+                              type="radio"
+                              onChange={(e) => setAnswer(option)}
+                            />
+                            {' '}
+                            <Label check>
+                              {option}
+                            </Label>
+                          </FormGroup>
+                        )
+                      )
+                    }
+                  </FormGroup>) : (
+                  <FormGroup>
+                    <Label className="answer">
+                      Введите ответ на вопрос
+                    </Label>
+                    <Input
+                      name="answer"
+                      placeholder="Answer"
+                      type="text"
+                      value={answer}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      style={{maxWidth: '50%'}}
 
-                />
-              </FormGroup>
+                    />
+                  </FormGroup>
+                )}
               <Button
                 variant="primary"
                 type="submit"
-                disabled={progress_parsed[currQuestion.id] !== undefined && progress_parsed[currQuestion.id][0]}
+                disabled={disableSubmit() as boolean}
               >
                 Submit
               </Button>
@@ -133,21 +158,21 @@ const QuestionsScreen: React.FC = () => {
             </Form>
           </div>
 
-        <div>
-          < Button variant="primary"
-            onClick={handlePrevious}
-            disabled={!(questionIndex>0)}
-          >
-            Предыдущий
-          </Button>
-          < Button variant="primary"
-            onClick={handleNext}
-            disabled={questions[questionIndex+1] === undefined}
-          >
-            Следующий
-          </Button>
-        </div>
-          <Label style={{position:"absolute", top:"2000px"}}>TEST
+          <div>
+            < Button variant="primary"
+              onClick={handlePrevious}
+              disabled={!(questionIndex > 0)}
+            >
+              Предыдущий
+            </Button>
+            < Button variant="primary"
+              onClick={handleNext}
+              disabled={questions[questionIndex + 1] === undefined}
+            >
+              Следующий
+            </Button>
+          </div>
+          <Label style={{position:'absolute', top:'2000px'}}>TEST
           </Label>
         </div>
       </div>

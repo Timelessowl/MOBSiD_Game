@@ -51,12 +51,12 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 class QuestionModel(models.Model):
     text = models.CharField(max_length=200, null=True)
     withOptions = models.BooleanField(default=False)
-    opt1 = models.CharField(max_length=200, null=True)
-    opt2 = models.CharField(max_length=200, null=True)
-    opt3 = models.CharField(max_length=200, null=True)
-    opt4 = models.CharField(max_length=200, null=True)
-    opt5 = models.CharField(max_length=200, null=True)
-    answer = models.CharField(max_length=200, null=True)
+    opt1 = models.CharField(max_length=200, null=True, blank=True)
+    opt2 = models.CharField(max_length=200, null=True, blank=True)
+    opt3 = models.CharField(max_length=200, null=True, blank=True)
+    opt4 = models.CharField(max_length=200, null=True, blank=True)
+    opt5 = models.CharField(max_length=200, null=True, blank=True)
+    answer = models.CharField(max_length=200, default=' ')
     objects = models.Manager()
     def __str__(self):
         return self.text

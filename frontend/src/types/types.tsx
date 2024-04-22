@@ -4,12 +4,11 @@ export type userType = {
   username: string;
   isSuperUser: boolean;
 }
-export type userDataType = {
-  user: userType;
-};
-export enum userStoreActions {
-  GET_USER_INFO,
-  CLEAR_USER_INFO
+
+interface JSONValue extends Array<number|boolean> { }
+
+export interface JSONObject {
+  [x: string]: JSONValue;
 }
 
 

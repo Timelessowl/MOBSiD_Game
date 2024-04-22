@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, {FormEvent, useEffect, useState} from 'react';
 import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup, Input} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
@@ -39,6 +38,7 @@ const AdminScreen: React.FC = () => {
     setOptions(nextCounters);
   }
 
+  const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(addQuestionAction({
@@ -90,32 +90,31 @@ const AdminScreen: React.FC = () => {
               <Label check>С вариантами ответа</Label>
             </FormGroup>
             {
-              OptionsSwitch ? [Options.map((option, i) => {
-                return(
-                <Input key={i}
-                    name={"opt "+ String(i+1)}
-                    placeholder={"Option "+ String(i+1)}
+              OptionsSwitch ? [Options.map((option, i) =>
+                (
+                  <Input key={uuid[i]}
+                    name={`opt${i}`}
+                    placeholder={`Option ${i + 1}`}
                     type="text"
                     value={Options[i]}
                     onChange={(e) => handleOptionChange(i, e.target.value)}
                     style={{marginBottom: '7px'}}
                   />
                 )
-                }),
-                <Label className="answerSelect">
+              ),
+              <Label key={'label'}>
                 Выберите правильный вариант
-                </Label> ,
-                <Input
+              </Label> ,
+              <Input key={'ans'}
                 id="answerSelect"
                 name="answerSelect"
                 type="select"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
               >
-                  {Options.map((option) => {
-                    return( <option>{option}</option>
-                    )
-                  })}
+                {Options.map((option, i) =>
+                  <option key={uuid[i]}>{option}</option>
+                )}
               </Input>
               ] : (
                 <FormGroup>
