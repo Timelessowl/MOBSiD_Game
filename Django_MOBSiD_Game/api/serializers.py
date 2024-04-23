@@ -90,6 +90,17 @@ class UserLoginSerializer(serializers.Serializer):
         return user
 
 
+class TestSerializer(serializers.Serializer):
+    class Meta:
+        model = TestModel
+        fields = '__all__'
+
+    def setBackground(self, data):
+        test_obj = TestModel.objects.get(test_id=data['test_id'])
+        test_obj.background = data['background']
+        test_obj.save()
+        return {'test_id': test_obj.test_id}
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel

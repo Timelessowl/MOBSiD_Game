@@ -1,10 +1,11 @@
-import React, {FormEvent, useEffect, useState} from 'react';
-import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup, Input} from 'reactstrap';
+/* eslint-disable */
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
+import {Form, FormText, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup, Input} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
-import {addQuestionAction} from '../../store/api-actions';
+import {addQuestionAction, setTestBackground} from '../../store/api-actions';
 
 
 const AdminScreen: React.FC = () => {
@@ -15,6 +16,7 @@ const AdminScreen: React.FC = () => {
   const [question, setQuestion] = useState('');
   const [OptionsSwitch, setOptionsSwitch] = useState(false);
   const [Options, setOptions] = useState(['', '', '', '', '']);
+  const [backgroundImg, setBackgroundImg] = useState<File>()
   const [positionX, setPositionX] = useState(0);
   const [positionY, setPositionY] = useState(0);
 
@@ -41,6 +43,7 @@ const AdminScreen: React.FC = () => {
   }
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
+
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(addQuestionAction({
@@ -56,6 +59,27 @@ const AdminScreen: React.FC = () => {
     }));
   };
 
+  const SubmitBackground = (evt: FormEvent) => {
+    evt.preventDefault();
+
+    console.log(backgroundImg)
+    if (backgroundImg){
+      dispatch(setTestBackground(
+        {
+          test_id: 1,
+          background: backgroundImg,
+          path: ''
+        }
+      )) }
+  };
+
+  const handleBackgroundInput= (e : ChangeEvent<HTMLInputElement>) => {
+    const files = (e.target as HTMLInputElement).files;
+    if (files !== null) {
+      setBackgroundImg(files[0])
+    }
+    return 1
+  }
 
   return (
     <div>
@@ -162,8 +186,29 @@ const AdminScreen: React.FC = () => {
             </Button>
           </Form>
         </div>
-        <div>
-          <input type='file' multiple accept="image/*" />
+        <div style={{marginLeft:'16px'}}>
+          <Form onSubmit={SubmitBackground}>
+            <FormGroup>
+              <Label for="exampleFile">
+                Выберите фон
+              </Label>
+              <Input
+                id="exampleFile"
+                name="file"
+                type="file"
+                accept="image/*"
+                onChange={handleBackgroundInput}
+              />
+              <FormText>
+                Изображение-карта для текущего теста
+              </FormText>
+            </FormGroup>
+            <FormGroup>
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </FormGroup>
+          </Form>
         </div>
       </div>
     </div>

@@ -50,15 +50,17 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
 class TestModel(models.Model):
     test_id = models.AutoField(primary_key=True)
-    background = models.ImageField(default='')
+    background = models.ImageField(upload_to="uploads/")
     path = models.JSONField()
+
+    objects = models.Manager()
 
     def __str__(self):
         return self.test_id
 
 
 class QuestionModel(models.Model):
-    test_id = models.ForeignKey(TestModel, on_delete=models.CASCADE, default=1)
+    test_id = models.ForeignKey(TestModel, on_delete=models.CASCADE)
     text = models.CharField(max_length=200, null=True)
     withOptions = models.BooleanField(default=False)
     opt1 = models.CharField(max_length=200, null=True, blank=True)

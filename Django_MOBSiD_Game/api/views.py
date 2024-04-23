@@ -91,5 +91,13 @@ class UserProgress(APIView):
 
     def get(self, request):
         serializer = UserProgressSerializer(request.user)
-        return Response(serializer.get_progress(user_data=request.user))
+        return Response(serializer.get_progress(user_data=request.user), status=status.HTTP_200_OK)
 
+
+class TestBackground(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = TestSerializer(request.data)
+        return Response(serializer.setBackground(data=request.data), status=status.HTTP_200_OK)

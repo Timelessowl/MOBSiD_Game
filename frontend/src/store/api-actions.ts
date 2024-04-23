@@ -6,6 +6,7 @@ import {Question, Questions, CheckAnsData} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
+import {TestData} from '../types/test';
 import {GameProgress} from '../types/state'
 
 
@@ -107,6 +108,21 @@ export const checkUserAnswer = createAsyncThunk<void, CheckAnsData, {
         answer: userAnswer
       });
       dispatch(getUserProgress);
+  }
+);
+
+export const setTestBackground = createAsyncThunk<void, TestData, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'test/background',
+  async ({test_id, background}, {dispatch, extra: api}) => {
+    await api.post(APIRoute.SetTestBackground, {test_id, background}, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
   },
 );
 

@@ -16,7 +16,8 @@ export enum APIRoute {
   Logout = '/api/logout',
   AddQuestion = '/api/add-question',
   CheckAnswer = '/api/check-answer',
-  Progress = 'api/progress'
+  Progress = 'api/progress',
+  SetTestBackground = 'api/set-background'
 }
 
 export enum AuthorizationStatus {

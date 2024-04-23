@@ -10,4 +10,5 @@ urlpatterns = [
     path('questions', views.AppQuestions.as_view(), name='questions'),
     path('progress', views.UserProgress.as_view(), name='progress'),
     path('check-answer', views.AppCheckAnswer.as_view(), name='check-answer'),
+    path('set-background', views.TestBackground.as_view(), name='set-background'),
 ]
