@@ -15,6 +15,8 @@ const AdminScreen: React.FC = () => {
   const [question, setQuestion] = useState('');
   const [OptionsSwitch, setOptionsSwitch] = useState(false);
   const [Options, setOptions] = useState(['', '', '', '', '']);
+  const [positionX, setPositionX] = useState(0);
+  const [positionY, setPositionY] = useState(0);
 
   useEffect(() => {
     if (!user?.user.isSuperUser) {
@@ -131,7 +133,30 @@ const AdminScreen: React.FC = () => {
                 </FormGroup>
               )
             }
-
+            <FormGroup>
+              <Label className="position">
+                Введите X позицию игрока после правильного ответа
+              </Label>
+              <Input
+                name="posX"
+                placeholder="X"
+                type="number"
+                min={0}
+                value={positionX}
+                onChange={(e) => setPositionX(Number(e.target.value))}
+              />
+              <Label className="position">
+                Введите Y позицию игрока после правильного ответа
+              </Label>
+              <Input
+                name="posY"
+                placeholder="Y"
+                type="number"
+                min={0}
+                value={positionY}
+                onChange={(e) => setPositionY(Number(e.target.value))}
+              />
+            </FormGroup>
             <Button variant="primary" type="submit">
               Submit
             </Button>

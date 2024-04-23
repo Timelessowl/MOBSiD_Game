@@ -73,17 +73,40 @@ const QuestionsScreen: React.FC = () => {
 
   const handlePrevious = (evt: FormEvent) => {
     evt.preventDefault();
+    setAnswer('');
     setQuestionIndex(questionIndex - 1);
   };
 
   const handleNext = (evt: FormEvent) => {
     evt.preventDefault();
+    setAnswer('');
     setQuestionIndex(questionIndex + 1);
   };
 
   const disableSubmit = () : boolean|undefined=>
     (progressParsed[currQuestion.id] !== undefined ? (answer === '' ||
       progressParsed[currQuestion.id][0] as boolean) : answer === '');
+
+  const getOptionsArray = () : [string] => {
+    const options : [string] = [''];
+    if (currQuestion.opt1 !== ''){
+      options[0] = (currQuestion.opt1);
+    }
+    if (currQuestion.opt2 !== ''){
+      options.push(currQuestion.opt2);
+    }
+    if (currQuestion.opt3 !== ''){
+      options.push(currQuestion.opt3);
+    }
+    if (currQuestion.opt4 !== ''){
+      options.push(currQuestion.opt4);
+    }
+    if (currQuestion.opt5 !== ''){
+      options.push(currQuestion.opt5);
+    }
+    return options;
+  }; // yep i know how shitty this solution is. Plan is to redo model to have single option field.
+
 
   return (
     <div>
@@ -109,8 +132,7 @@ const QuestionsScreen: React.FC = () => {
                       Выберите правильный вариант ответа
                     </legend>
                     {
-                      [currQuestion.opt1, currQuestion.opt2, currQuestion.opt3,
-                        currQuestion.opt4, currQuestion.opt5].map((option, i)=>
+                      getOptionsArray().map((option, i)=>
                         (
                           <FormGroup check key={uuid[i]}>
                             <Input

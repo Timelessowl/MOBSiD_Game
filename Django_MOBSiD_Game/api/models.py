@@ -48,7 +48,17 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
+class TestModel(models.Model):
+    test_id = models.AutoField(primary_key=True)
+    background = models.ImageField(default='')
+    path = models.JSONField()
+
+    def __str__(self):
+        return self.test_id
+
+
 class QuestionModel(models.Model):
+    test_id = models.ForeignKey(TestModel, on_delete=models.CASCADE, default=1)
     text = models.CharField(max_length=200, null=True)
     withOptions = models.BooleanField(default=False)
     opt1 = models.CharField(max_length=200, null=True, blank=True)

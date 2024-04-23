@@ -56,8 +56,6 @@ const GameScreen: React.FC = () => {
   }
 
 
-
-
   gameField[positionV][positionH] = img;
 
   const handleAuthButtonClick = () => (
