@@ -4,9 +4,11 @@ import {AuthorizationStatus} from '../const.js';
 import {UserData} from './user-data';
 
 export type GameData = {
+  testId :number;
   questions: Questions;
-  isQuestionsDataLoading: boolean;
-  hasError: boolean;
+  loading: boolean;
+  background: File | string;
+  path: string;
 };
 
 export type GameProgress = {

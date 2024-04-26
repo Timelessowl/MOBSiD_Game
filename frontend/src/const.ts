@@ -17,7 +17,8 @@ export enum APIRoute {
   AddQuestion = '/api/add-question',
   CheckAnswer = '/api/check-answer',
   Progress = 'api/progress',
-  SetTestBackground = 'api/set-background'
+  SetTestBackground = 'api/set-background',
+  TestConfig = 'api/test-config'
 }
 
 export enum AuthorizationStatus {
@@ -28,7 +29,6 @@ export enum AuthorizationStatus {
 
 
 export enum NameSpace {
-  AuthInfo = 'AUTH_INFO',
   Data = 'DATA',
   Game = 'GAME',
   User = 'USER',

@@ -6,8 +6,7 @@ import {Question, Questions, CheckAnsData} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
-import {TestData} from '../types/test';
-import {GameProgress} from '../types/state'
+import {GameProgress, GameData} from '../types/state'
 
 
 export const fetchQuestionAction = createAsyncThunk<Questions, undefined, {
@@ -111,14 +110,14 @@ export const checkUserAnswer = createAsyncThunk<void, CheckAnsData, {
   }
 );
 
-export const setTestBackground = createAsyncThunk<void, TestData, {
+export const setTestBackground = createAsyncThunk<void, GameData, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'test/background',
-  async ({test_id, background}, {dispatch, extra: api}) => {
-    await api.post(APIRoute.SetTestBackground, {test_id, background}, {
+  async ({testId, background}, {dispatch, extra: api}) => {
+    await api.post(APIRoute.SetTestBackground, {testId: testId, background}, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -135,6 +134,24 @@ export const getUserProgress = createAsyncThunk<GameProgress, undefined, {
   'user/progress',
   async (_arg, {extra: api}) => {
     const {data} = await api.get(APIRoute.Progress);
+    return data;
+
+  },
+);
+
+export const getTestConfig = createAsyncThunk<GameData, undefined, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'test/config',
+  async (_arg, {extra: api}) => {
+    const {data} = await api.get(APIRoute.TestConfig, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return data;
 
   },

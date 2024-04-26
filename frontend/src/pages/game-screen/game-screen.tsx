@@ -1,20 +1,14 @@
 /* eslint-disable */
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import img from './Cmonya.png';
-import playerLogo from './player.png'
-import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getQuestions} from '../../store/game-data/selectors';
-import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem, Table} from 'reactstrap';
-import {useNavigate} from 'react-router-dom';
-import {AppRoute, AuthorizationStatus} from '../../const';
-import {Question} from '../../types/question';
-import {checkUserAnswer, getUserProgress} from "../../store/api-actions";
-import {getLoading, getPosition} from "../../store/game-process/selectors";
-import {getUserData} from "../../store/user-process/selectors";
-import {store} from "../../store";
-import Load from "../../components/load/load";
-
-
+import playerLogo from './player.png';
+import { useAppSelector} from '../../hooks';
+import {getBackground, getQuestionsLoading} from '../../store/game-data/selectors';
+import {Button, Table} from 'reactstrap';
+import {getUserProgress} from '../../store/api-actions';
+import {getProgressLoading, getPosition} from '../../store/game-process/selectors';
+import {store} from '../../store';
+import Load from '../../components/load/load';
 
 
 const GameScreen: React.FC = () => {
@@ -22,8 +16,8 @@ const GameScreen: React.FC = () => {
 
   const gameFieldRows = 20;
   const gameFieldColumns = 20;
-  const cellWidth: string = String(100/gameFieldColumns)+'%';
-  const cellHeight: string = String(100/gameFieldRows)+'%';
+  const cellWidth = `${100 / gameFieldColumns}%`;
+  const cellHeight = `${100 / gameFieldRows}%`;
   const gameField: string[][] = [];
   for (let i = 0; i < gameFieldRows; i++) {
     gameField[i] = [];
@@ -33,66 +27,55 @@ const GameScreen: React.FC = () => {
   }
 
 
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const user = useAppSelector(getUserData);
-
-  var position = useAppSelector(getPosition);
-
-
   const [positionH, setPositionH] = useState(0);
   const [positionV, setPositionV] = useState(0);
+  const isProgressLoading = useAppSelector(getProgressLoading);
+  const isQuestionsLoading = useAppSelector(getQuestionsLoading);
+
+  const position = useAppSelector(getPosition);
 
   useEffect(() => {
     if (positionV !== position){
       setPositionV(position);
       setPositionH(position);
-      console.log(positionH, positionV, position)
     }
 
   }, [position]);
-  if (useAppSelector(getLoading)){
-    return <Load/>;
-  }
 
+  const backgroundImg = useAppSelector(getBackground);
 
   gameField[positionV][positionH] = img;
 
-  const handleAuthButtonClick = () => (
-    navigate(AppRoute.Auth)
-  );
-
+  if (isProgressLoading || isQuestionsLoading){
+    return <Load/>;
+  }
 
   return (
 
-    <div style={{float: "right", width:"50%", height:'100%', position:'fixed', right:"0", top:"30px"}}>
-      <Button onClick={()=> setPositionH(positionH+1)}>D</Button>
-      <Button onClick={()=> setPositionH(positionH-1)}>A</Button>
-      <Button onClick={()=> setPositionV(positionV+1)}>S</Button>
-      <Button onClick={()=> setPositionV(positionV-1)}>W</Button>
-        <div style={{ flex: 2, display: 'block', justifyContent: 'center', alignItems: 'stretch'}}>
-          <img src={img} alt="Image" style={{ maxWidth: '100%', maxHeight: '100%', width:"100%", zIndex: 1, position: "absolute"}} />
-          <Table
-            borderless
-            style={{zIndex: 5, position:"absolute", top:'20px',width: "100%", height: "100%"}}>
-            <tbody style={{backgroundColor:"#transparent"}}>
-              {gameField.map((row)=> {
-                return (<tr>{
-                  row.map((cell)=> {
-                    return (<td style={{backgroundColor:"transparent", width: cellWidth, height: cellHeight}} >{
-                      (cell ? <img src={playerLogo}/>: '')
-                    }</td>)
-                  })
-
-                }</tr>)
-              })
-              }
-
-            </tbody>
-
-          </Table>
-        </div>
-
+    <div style={{float: 'right', width:'50%', height:'100%', position:'fixed', right:'0', top:'30px'}}>
+      <Button onClick={()=> setPositionH(positionH + 1)}>D</Button>
+      <Button onClick={()=> setPositionH(positionH - 1)}>A</Button>
+      <Button onClick={()=> setPositionV(positionV + 1)}>S</Button>
+      <Button onClick={()=> setPositionV(positionV - 1)}>W</Button>
+      <div style={{ flex: 2, display: 'block', justifyContent: 'center', alignItems: 'stretch'}}>
+        <img src={`data:image/*;base64,${backgroundImg}`} alt='Image' style={{ maxWidth: '100%', maxHeight: '100%', width:'100%', zIndex: 1, position: 'absolute'}} />
+        <Table
+          borderless
+          style={{zIndex: 5, position:'absolute', top:'20px',width: '100%', height: '100%'}}
+        >
+          <tbody style={{backgroundColor:'#transparent'}}>
+            {gameField.map((row, i)=>
+              (<tr key={`row${gameFieldRows - i}`}>{
+                row.map((cell, j)=>
+                  (<td key={`row${gameFieldRows - i}column${gameFieldColumns - j}`} style={{backgroundColor:'transparent', width: cellWidth, height: cellHeight}} >{
+                    (cell ? <img src={playerLogo}/> : '')
+                  }</td>)
+                )
+              }</tr>)
+            )}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 };

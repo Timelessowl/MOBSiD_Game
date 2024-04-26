@@ -5,7 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
-import {addQuestionAction, setTestBackground} from '../../store/api-actions';
+import {addQuestionAction, getTestConfig, setTestBackground} from '../../store/api-actions';
 
 
 const AdminScreen: React.FC = () => {
@@ -43,7 +43,7 @@ const AdminScreen: React.FC = () => {
   }
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
-
+  dispatch(getTestConfig())
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(addQuestionAction({
@@ -62,13 +62,15 @@ const AdminScreen: React.FC = () => {
   const SubmitBackground = (evt: FormEvent) => {
     evt.preventDefault();
 
-    console.log(backgroundImg)
     if (backgroundImg){
       dispatch(setTestBackground(
         {
-          test_id: 1,
+          testId: 1,
           background: backgroundImg,
-          path: ''
+          path: '',
+          questions : [],
+          loading: false
+
         }
       )) }
   };

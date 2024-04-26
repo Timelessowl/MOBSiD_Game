@@ -11,4 +11,5 @@ urlpatterns = [
     path('progress', views.UserProgress.as_view(), name='progress'),
     path('check-answer', views.AppCheckAnswer.as_view(), name='check-answer'),
     path('set-background', views.TestBackground.as_view(), name='set-background'),
+    path('test-config', views.TestConfig.as_view(), name='test-config'),
 ]

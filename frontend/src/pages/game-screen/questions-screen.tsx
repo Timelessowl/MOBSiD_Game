@@ -1,13 +1,14 @@
+/* eslint-disable */
 import React, {FormEvent, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getQuestions} from '../../store/game-data/selectors';
+import {getQuestions, getQuestionsLoading} from '../../store/game-data/selectors';
 import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {Question} from '../../types/question';
 import {JSONObject} from '../../types/types';
 import {checkUserAnswer} from '../../store/api-actions';
-import {getLoading, getProgress} from '../../store/game-process/selectors';
+import {getProgressLoading, getProgress} from '../../store/game-process/selectors';
 import Load from '../../components/load/load';
 
 
@@ -28,37 +29,16 @@ const QuestionsScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const questions = useAppSelector(getQuestions);
   const progress = useAppSelector(getProgress);
-
+  const isProgressLoading = useAppSelector(getProgressLoading);
+  const isQuestionsLoading = useAppSelector(getQuestionsLoading);
   const [answer, setAnswer] = useState('');
   const [questionIndex, setQuestionIndex] = useState(-1);
   const [prevQuestionIndex, setPrevQuestionIndex] = useState(-1);
   const [currQuestion, setCurrQuestion] = useState<Question>(emptyQuestion);
 
-  if (useAppSelector(getLoading)){
-    return <Load/>;
-  }
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
-  const progressParsed = JSON.parse(progress) as JSONObject;
   let successLabel: string;
   let triesLabel: string;
-
-
-  if (progressParsed[currQuestion.id] !== undefined){
-    successLabel = progressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
-    triesLabel = `Использованно ${progressParsed[currQuestion.id][1] as number} попыток`;
-  }
-  else {
-    successLabel = '';
-    triesLabel = '';
-  }
-
-  if (questionIndex === -1 && questions[0] !== undefined) {
-    setQuestionIndex(0);
-  }
-  if (prevQuestionIndex !== questionIndex){
-    setCurrQuestion(questions[questionIndex]);
-    setPrevQuestionIndex(questionIndex);
-  }
 
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
@@ -82,6 +62,29 @@ const QuestionsScreen: React.FC = () => {
     setAnswer('');
     setQuestionIndex(questionIndex + 1);
   };
+
+  if (isProgressLoading || isQuestionsLoading){
+    return <Load/>;
+  }
+
+  const progressParsed = JSON.parse(progress) as JSONObject;
+  if (progressParsed[currQuestion.id] !== undefined){
+    successLabel = progressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
+    triesLabel = `Использованно ${progressParsed[currQuestion.id][1] as number} попыток`;
+  }
+  else {
+    successLabel = '';
+    triesLabel = '';
+  }
+
+  if (questionIndex === -1 && questions[0] !== undefined) {
+    setQuestionIndex(0);
+  }
+  if (prevQuestionIndex !== questionIndex){
+    setCurrQuestion(questions[questionIndex]);
+    setPrevQuestionIndex(questionIndex);
+  }
+
 
   const disableSubmit = () : boolean|undefined=>
     (progressParsed[currQuestion.id] !== undefined ? (answer === '' ||
@@ -182,14 +185,14 @@ const QuestionsScreen: React.FC = () => {
 
           <div>
             < Button variant="primary"
-              onClick={handlePrevious}
-              disabled={!(questionIndex > 0)}
+                     onClick={handlePrevious}
+                     disabled={!(questionIndex > 0)}
             >
               Предыдущий
             </Button>
             < Button variant="primary"
-              onClick={handleNext}
-              disabled={questions[questionIndex + 1] === undefined}
+                     onClick={handleNext}
+                     disabled={questions[questionIndex + 1] === undefined}
             >
               Следующий
             </Button>
