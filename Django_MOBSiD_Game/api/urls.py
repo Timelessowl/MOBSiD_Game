@@ -12,4 +12,5 @@ urlpatterns = [
     path('check-answer', views.AppCheckAnswer.as_view(), name='check-answer'),
     path('set-background', views.TestBackground.as_view(), name='set-background'),
     path('test-config', views.TestConfig.as_view(), name='test-config'),
+    path('tests', views.AppTests.as_view(), name='tests'),
 ]

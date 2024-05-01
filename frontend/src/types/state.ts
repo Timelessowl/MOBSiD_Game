@@ -4,6 +4,7 @@ import {AuthorizationStatus} from '../const.js';
 import {UserData} from './user-data';
 
 export type GameData = {
+  totalTests : [number],
   testId :number;
   questions: Questions;
   loading: boolean;

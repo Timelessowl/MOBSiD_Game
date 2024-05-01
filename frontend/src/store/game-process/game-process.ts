@@ -1,6 +1,5 @@
 /* eslint-disable */
 import {createSlice} from '@reduxjs/toolkit';
-import {isAnswerCorrect} from '../../game';
 import {NameSpace, FIRST_GAME_STEP, AuthorizationStatus} from '../../const';
 import {GameProgress} from '../../types/state';
 import {Question} from '../../types/question';

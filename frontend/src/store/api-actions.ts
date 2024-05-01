@@ -2,14 +2,14 @@
 import axios, {AxiosInstance} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {AppDispatch, State} from '../types/state.js';
-import {Question, Questions, CheckAnsData} from '../types/question';
+import {Question, Questions, CheckAnsData, Tests} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
 import {GameProgress, GameData} from '../types/state'
 
 
-export const fetchQuestionAction = createAsyncThunk<Questions, undefined, {
+export const fetchQuestionsAction = createAsyncThunk<Questions, undefined, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -21,6 +21,17 @@ export const fetchQuestionAction = createAsyncThunk<Questions, undefined, {
   },
 );
 
+export const fetchTestsAction = createAsyncThunk<Tests, undefined, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/fetchTests',
+  async (_arg, {extra: api}) => {
+    const {data} = await api.get<Tests>(APIRoute.Tests);
+    return data;
+  },
+);
 export const checkAuthAction = createAsyncThunk<UserData, undefined, {
   dispatch: AppDispatch;
   state: State;
@@ -110,7 +121,7 @@ export const checkUserAnswer = createAsyncThunk<void, CheckAnsData, {
   }
 );
 
-export const setTestBackground = createAsyncThunk<void, GameData, {
+export const setTestBackground = createAsyncThunk<void, Partial<GameData>, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -139,19 +150,33 @@ export const getUserProgress = createAsyncThunk<GameProgress, undefined, {
   },
 );
 
-export const getTestConfig = createAsyncThunk<GameData, undefined, {
+export const getTestConfig = createAsyncThunk<GameData, number, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance,
 
 }>(
   'test/config',
-  async (_arg, {extra: api}) => {
-    const {data} = await api.get(APIRoute.TestConfig, {
+  async (testId, {extra: api}) => {
+    const {data} = await api.post(APIRoute.TestConfig, {testId: testId}, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
+    return data;
+
+  },
+);
+
+export const getTests = createAsyncThunk<[number], undefined, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'test/totalTests',
+  async (testId, {extra: api}) => {
+    const {data} = await api.get(APIRoute.Tests);
     return data;
 
   },

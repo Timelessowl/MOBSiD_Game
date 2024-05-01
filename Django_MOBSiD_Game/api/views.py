@@ -106,13 +106,25 @@ class TestBackground(APIView):
         return Response(serializer.setBackground(data=request.data), status=status.HTTP_200_OK)
 
 
-class TestConfig(APIView):
+class AppTests (APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
 
     def get(self, request):
+        serializer = TestSerializer(TestModel.objects.all(), many=True)
+        data = []
+        for i in serializer.data:
+            data.append(i['testId'])
+        return Response(data=data, status=status.HTTP_200_OK)
 
-        serializer = TestSerializer(TestModel.objects.get(testId=1))
+
+class TestConfig(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+
+        serializer = TestSerializer(TestModel.objects.get(testId=request.data['testId']))
 
         data = serializer.data
         with open( data['background'].strip("/"), 'rb') as image_file:

@@ -43,7 +43,7 @@ const AdminScreen: React.FC = () => {
   }
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
-  dispatch(getTestConfig())
+  // dispatch(getTestConfig())
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(addQuestionAction({
@@ -66,14 +66,11 @@ const AdminScreen: React.FC = () => {
       dispatch(setTestBackground(
         {
           testId: 1,
-          background: backgroundImg,
-          path: '',
-          questions : [],
-          loading: false
-
+          background: backgroundImg
         }
       )) }
   };
+
 
   const handleBackgroundInput= (e : ChangeEvent<HTMLInputElement>) => {
     const files = (e.target as HTMLInputElement).files;

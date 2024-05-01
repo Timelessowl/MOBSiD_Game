@@ -1,3 +1,5 @@
+import {GameData} from './state';
+
 export type Question = {
   id: number;
   text: string;
@@ -11,6 +13,7 @@ export type Question = {
 };
 
 export type Questions = Question[];
+export type Tests = GameData[];
 
 export type CurrentQuestion = {
   testId: number;
@@ -26,3 +29,4 @@ export type CheckAnsData = {
   questionId: number;
   userAnswer: string;
 }
+

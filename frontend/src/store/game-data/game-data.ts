@@ -1,10 +1,12 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace} from '../../const';
 import {GameData} from '../../types/state';
-import {fetchQuestionAction, getTestConfig} from '../api-actions';
+import {fetchQuestionsAction, getTestConfig, getTests} from '../api-actions';
+import {setTestId} from '../action';
 
 const initialState: GameData = {
-  testId : 0,
+  totalTests : [0],
+  testId : 1,
   questions: [],
   loading: false,
   background: '',
@@ -17,14 +19,14 @@ export const gameData = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(fetchQuestionAction.pending, (state) => {
+      .addCase(fetchQuestionsAction.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchQuestionAction.fulfilled, (state, action) => {
+      .addCase(fetchQuestionsAction.fulfilled, (state, action) => {
         state.questions = action.payload;
         state.loading = false;
       })
-      .addCase(fetchQuestionAction.rejected, (state) => {
+      .addCase(fetchQuestionsAction.rejected, (state) => {
         state.loading = false;
       })
 
@@ -37,7 +39,16 @@ export const gameData = createSlice({
       })
       .addCase(getTestConfig.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(getTests.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(setTestId, (state, action) => {
+        state.testId = action.payload;
+      })
+      .addCase(getTests.fulfilled, (state, action) => {
+        state.totalTests = action.payload;
+        state.loading = false;
       });
-
   }
 });

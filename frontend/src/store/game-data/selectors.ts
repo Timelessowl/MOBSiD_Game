@@ -8,3 +8,4 @@ export const getQuestionsLoading = (state: Pick<State, NameSpace.Data>): boolean
 export const getPath = (state: Pick<State, NameSpace.Data>): string => state[NameSpace.Data].path;
 export const getBackground = (state: Pick<State, NameSpace.Data>): string => state[NameSpace.Data].background as string;
 export const getTestId = (state: Pick<State, NameSpace.Data>): number => state[NameSpace.Data].testId;
+export const getTotalTests = (state: Pick<State, NameSpace.Data>): [number] => state[NameSpace.Data].totalTests;
