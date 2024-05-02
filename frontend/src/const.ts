@@ -4,7 +4,7 @@ export const MAX_MISTAKE_COUNT = 3;
 export enum AppRoute {
   Auth = '/auth',
   Root = '/',
-  Game = '/game',
+  Game = '/game/:id',
   Admin = '/admin'
 }
 

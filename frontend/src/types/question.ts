@@ -1,6 +1,7 @@
 import {GameData} from './state';
 
 export type Question = {
+  testId : number,
   id: number;
   text: string;
   withOptions: boolean;

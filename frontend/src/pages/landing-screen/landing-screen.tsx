@@ -55,7 +55,7 @@ const LandingScreen: React.FC = () => {
 
   const handleTestSelect = (testId : number) => {
     dispatch(setTestId(testId))
-    navigate(AppRoute.Game)
+    navigate(`/game/${testId}`)
 
 
   };

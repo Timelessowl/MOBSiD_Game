@@ -81,7 +81,7 @@ export const logoutAction = createAsyncThunk<void, undefined, {
   },
 );
 
-export const addQuestionAction = createAsyncThunk<void, Question, {
+export const addQuestionAction = createAsyncThunk<void, Partial<Question>, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance,

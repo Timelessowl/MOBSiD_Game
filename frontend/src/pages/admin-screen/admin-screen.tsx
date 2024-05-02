@@ -6,12 +6,14 @@ import {AppRoute} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
 import {addQuestionAction, getTestConfig, setTestBackground} from '../../store/api-actions';
+import {getTotalTests} from '../../store/game-data/selectors';
 
 
 const AdminScreen: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
+  const totalTests = useAppSelector(getTotalTests);
   const [answer, setAnswer] = useState('');
   const [question, setQuestion] = useState('');
   const [OptionsSwitch, setOptionsSwitch] = useState(false);
@@ -19,6 +21,7 @@ const AdminScreen: React.FC = () => {
   const [backgroundImg, setBackgroundImg] = useState<File>()
   const [positionX, setPositionX] = useState(0);
   const [positionY, setPositionY] = useState(0);
+  const [testId, setTestId] = useState(1);
 
   useEffect(() => {
     if (!user?.user.isSuperUser) {
@@ -43,11 +46,10 @@ const AdminScreen: React.FC = () => {
   }
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
-  // dispatch(getTestConfig())
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     dispatch(addQuestionAction({
-      id: 0,
+      testId: testId,
       text: question,
       withOptions: OptionsSwitch,
       opt1: Options[0],
@@ -65,7 +67,7 @@ const AdminScreen: React.FC = () => {
     if (backgroundImg){
       dispatch(setTestBackground(
         {
-          testId: 1,
+          testId: testId,
           background: backgroundImg
         }
       )) }
@@ -96,6 +98,22 @@ const AdminScreen: React.FC = () => {
             <Label className="question">
               Введите вопрос
             </Label>
+            <FormGroup>
+              <Label key={'label'}>
+                Выберите тест для редактирования
+              </Label> ,
+              <Input key={'ans'}
+                     id="answerSelect"
+                     name="answerSelect"
+                     type="select"
+                     value={testId}
+                     onChange={(e) => setTestId(Number(e.target.value))}
+              >
+                {totalTests.map((test, i) =>
+                  <option>{test}</option>
+                )}
+              </Input>
+            </FormGroup>
             <FormGroup>
               <textarea style={{ flex: 1, padding: '1rem' }}
                 rows={10}
