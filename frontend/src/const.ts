@@ -18,6 +18,7 @@ export enum APIRoute {
   CheckAnswer = '/api/check-answer',
   Progress = 'api/progress',
   SetTestBackground = 'api/set-background',
+  SetTestPath = 'api/set-test-path',
   TestConfig = 'api/test-config',
   Tests = 'api/tests'
 }

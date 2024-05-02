@@ -2,11 +2,10 @@ import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace} from '../../const';
 import {GameData} from '../../types/state';
 import {fetchQuestionsAction, getTestConfig, getTests} from '../api-actions';
-import {setTestId} from '../action';
 
 const initialState: GameData = {
   totalTests : [0],
-  testId : 1,
+  testId : 0,
   questions: [],
   loading: false,
   background: '',
@@ -35,6 +34,7 @@ export const gameData = createSlice({
       })
       .addCase(getTestConfig.fulfilled, (state, action) => {
         state.background = action.payload.background as string;
+        state.path = action.payload.path;
         state.loading = false;
       })
       .addCase(getTestConfig.rejected, (state) => {
@@ -42,9 +42,6 @@ export const gameData = createSlice({
       })
       .addCase(getTests.pending, (state) => {
         state.loading = true;
-      })
-      .addCase(setTestId, (state, action) => {
-        state.testId = action.payload;
       })
       .addCase(getTests.fulfilled, (state, action) => {
         state.totalTests = action.payload;

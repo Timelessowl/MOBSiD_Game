@@ -11,7 +11,6 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
-store.dispatch(fetchQuestionsAction());
 store.dispatch(checkAuthAction());
 store.dispatch(getTests());
 

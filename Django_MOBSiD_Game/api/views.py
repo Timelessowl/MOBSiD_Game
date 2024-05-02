@@ -74,10 +74,19 @@ class AppQuestions(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
 
-    def get(self, request):
-        serializer = AppQuestionsSerializer(QuestionModel.objects.all(), many=True)
+    def post(self, request):
+        serializer = AppQuestionsSerializer(QuestionModel.objects.filter(testId=request.data['testId']), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class AppAddToPath(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = TestSerializer(TestModel.objects.get(testId=request.data['testId']))
+        serializer.addToPath(request.data)
+        return Response(serializer.data['path'], status=status.HTTP_200_OK)
 
 class AppCheckAnswer(APIView):
     permission_classes = (permissions.IsAuthenticated,)

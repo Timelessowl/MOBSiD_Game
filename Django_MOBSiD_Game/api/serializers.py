@@ -13,15 +13,18 @@ class AppQuestionsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def add_new(self, data):
-        question_object = QuestionModel(text=data['text'],
-                                        withOptions=data['withOptions'],
-                                        answer=data['answer'],
-                                        opt1=data['opt1'],
-                                        opt2=data['opt2'],
-                                        opt3=data['opt3'],
-                                        opt4=data['opt4'],
-                                        opt5=data['opt5'],
-                                        )
+        test_obj = TestModel.objects.get(testId=data['testId'])
+        question_object = QuestionModel(
+            testId=test_obj,
+            text=data['text'],
+            withOptions=data['withOptions'],
+            answer=data['answer'],
+            opt1=data['opt1'],
+            opt2=data['opt2'],
+            opt3=data['opt3'],
+            opt4=data['opt4'],
+            opt5=data['opt5'],
+        )
         question_object.save()
         return question_object
 
@@ -101,7 +104,17 @@ class TestSerializer(serializers.ModelSerializer):
         test_obj.save()
         return {'testId': test_obj.testId}
 
+    def addToPath(self, data):
+        test_obj = TestModel.objects.get(testId=data['testId'])
+        if test_obj.path != "":
+            path = dict(json.loads(test_obj.path))
+            path.update({max(int(i) for i in path.keys())+1: data['path']})
+        else:
+            path = {1: data['path']}
 
+        test_obj.path = json.dumps(path)
+        test_obj.save()
+        return test_obj.path
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

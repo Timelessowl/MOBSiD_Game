@@ -4,7 +4,7 @@ import {Link, useParams} from 'react-router-dom';
 import img from './Cmonya.png';
 import playerLogo from './player.png';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getBackground, getQuestionsLoading, getTestId} from '../../store/game-data/selectors';
+import {getBackground, getQuestionsLoading} from '../../store/game-data/selectors';
 import {Button, Table} from 'reactstrap';
 import {getTestConfig, getUserProgress} from '../../store/api-actions';
 import {getProgressLoading, getPosition} from '../../store/game-process/selectors';
@@ -28,7 +28,7 @@ const GameScreen: React.FC<Props> = (props) => {
 
   const dispatch = useAppDispatch();
   const position = useAppSelector(getPosition);
-  // const testId = useAppSelector(getTestId);
+
   const gameFieldRows = 20;
   const gameFieldColumns = 20;
   const cellWidth = `${100 / gameFieldColumns}%`;

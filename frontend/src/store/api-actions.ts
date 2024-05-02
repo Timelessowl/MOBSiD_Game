@@ -9,14 +9,14 @@ import {UserData} from '../types/user-data';
 import {GameProgress, GameData} from '../types/state'
 
 
-export const fetchQuestionsAction = createAsyncThunk<Questions, undefined, {
+export const fetchQuestionsAction = createAsyncThunk<Questions, {testId: number}, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'data/fetchQuestions',
-  async (_arg, {extra: api}) => {
-    const {data} = await api.get<Questions>(APIRoute.Questions);
+  async ({testId}, {extra: api}) => {
+    const {data} = await api.post<Questions>(APIRoute.Questions, {testId: testId});
     return data;
   },
 );
@@ -91,6 +91,7 @@ export const addQuestionAction = createAsyncThunk<void, Partial<Question>, {
   async (data, {dispatch, extra: api}) => {
     await api.post(APIRoute.AddQuestion,
       {
+        testId: data.testId,
         text: data.text,
         withOptions: data.withOptions,
         opt1:data.opt1,
@@ -133,6 +134,17 @@ export const setTestBackground = createAsyncThunk<void, Partial<GameData>, {
         'Content-Type': 'multipart/form-data'
       }
     });
+  },
+);
+
+export const addToTestPath = createAsyncThunk<void, {testId: number, path: [number, number]}, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'test/path',
+  async ({testId, path}, {dispatch, extra: api}) => {
+    await api.post(APIRoute.SetTestPath, {testId: testId, path: path});
   },
 );
 

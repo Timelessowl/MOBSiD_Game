@@ -5,8 +5,9 @@ import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
-import {addQuestionAction, getTestConfig, setTestBackground} from '../../store/api-actions';
+import {addQuestionAction, addToTestPath, getTestConfig, setTestBackground} from '../../store/api-actions';
 import {getTotalTests} from '../../store/game-data/selectors';
+import {JSONObject} from "../../types/types";
 
 
 const AdminScreen: React.FC = () => {
@@ -59,6 +60,11 @@ const AdminScreen: React.FC = () => {
       opt5: Options[4],
       answer: answer
     }));
+    dispatch(addToTestPath({
+      testId: testId,
+      path: [positionX, positionY]}
+    ))
+
   };
 
   const SubmitBackground = (evt: FormEvent) => {
@@ -72,7 +78,6 @@ const AdminScreen: React.FC = () => {
         }
       )) }
   };
-
 
   const handleBackgroundInput= (e : ChangeEvent<HTMLInputElement>) => {
     const files = (e.target as HTMLInputElement).files;

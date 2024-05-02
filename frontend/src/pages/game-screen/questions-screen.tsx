@@ -1,19 +1,31 @@
 /* eslint-disable */
-import React, {FormEvent, useState} from 'react';
+import React, {FormEvent, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getQuestions, getQuestionsLoading} from '../../store/game-data/selectors';
+import {getPath, getQuestions, getQuestionsLoading} from '../../store/game-data/selectors';
 import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {Question} from '../../types/question';
 import {JSONObject} from '../../types/types';
-import {checkUserAnswer} from '../../store/api-actions';
-import {getProgressLoading, getProgress} from '../../store/game-process/selectors';
+import {checkUserAnswer, fetchQuestionsAction, getTestConfig, getUserProgress} from '../../store/api-actions';
+import {getProgressLoading, getProgress, getPosition} from '../../store/game-process/selectors';
 import Load from '../../components/load/load';
+import {store} from "../../store";
 
 
 const QuestionsScreen: React.FC = () => {
+  const {id} = useParams();
+  const testId = Number(id)
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    store.dispatch(getUserProgress());
+    store.dispatch(fetchQuestionsAction({testId:testId}));
+
+  }, [dispatch]);
+
   const emptyQuestion: Question = {
+    testId: 0,
     id: -1,
     text: 'No such question',
     withOptions: false,
@@ -26,7 +38,6 @@ const QuestionsScreen: React.FC = () => {
   };
 
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const questions = useAppSelector(getQuestions);
   const progress = useAppSelector(getProgress);
   const isProgressLoading = useAppSelector(getProgressLoading);
@@ -197,8 +208,6 @@ const QuestionsScreen: React.FC = () => {
               Следующий
             </Button>
           </div>
-          <Label style={{position:'absolute', top:'2000px'}}>TEST
-          </Label>
         </div>
       </div>
     </div>
