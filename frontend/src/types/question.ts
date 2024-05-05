@@ -14,7 +14,6 @@ export type Question = {
 };
 
 export type Questions = Question[];
-export type Tests = GameData[];
 
 export type CurrentQuestion = {
   testId: number;

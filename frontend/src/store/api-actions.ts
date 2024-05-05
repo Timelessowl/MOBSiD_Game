@@ -1,8 +1,8 @@
 /* eslint-disable */
 import axios, {AxiosInstance} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {AppDispatch, State} from '../types/state.js';
-import {Question, Questions, CheckAnsData, Tests} from '../types/question';
+import {AppDispatch, State, TestData} from '../types/state.js';
+import {Question, Questions, CheckAnsData} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
@@ -21,14 +21,14 @@ export const fetchQuestionsAction = createAsyncThunk<Questions, {testId: number}
   },
 );
 
-export const fetchTestsAction = createAsyncThunk<Tests, undefined, {
+export const fetchTestsAction = createAsyncThunk<TestData[], undefined, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'data/fetchTests',
   async (_arg, {extra: api}) => {
-    const {data} = await api.get<Tests>(APIRoute.Tests);
+    const {data} = await api.get<TestData[]>(APIRoute.Tests);
     return data;
   },
 );
@@ -122,7 +122,7 @@ export const checkUserAnswer = createAsyncThunk<void, CheckAnsData, {
   }
 );
 
-export const setTestBackground = createAsyncThunk<void, Partial<GameData>, {
+export const setTestBackground = createAsyncThunk<void, Partial<TestData>, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -162,7 +162,7 @@ export const getUserProgress = createAsyncThunk<GameProgress, undefined, {
   },
 );
 
-export const getTestConfig = createAsyncThunk<GameData, number, {
+export const getTestConfig = createAsyncThunk<TestData, number, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance,
@@ -180,7 +180,7 @@ export const getTestConfig = createAsyncThunk<GameData, number, {
   },
 );
 
-export const getTests = createAsyncThunk<[number], undefined, {
+export const getTests = createAsyncThunk<TestData[], undefined, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance,

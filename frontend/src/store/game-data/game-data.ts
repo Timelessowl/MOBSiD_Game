@@ -1,15 +1,12 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace} from '../../const';
 import {GameData} from '../../types/state';
-import {fetchQuestionsAction, getTestConfig, getTests} from '../api-actions';
+import {fetchQuestionsAction} from '../api-actions';
 
 const initialState: GameData = {
-  totalTests : [0],
-  testId : 0,
   questions: [],
   loading: false,
-  background: '',
-  path:''
+
 };
 
 export const gameData = createSlice({
@@ -26,25 +23,6 @@ export const gameData = createSlice({
         state.loading = false;
       })
       .addCase(fetchQuestionsAction.rejected, (state) => {
-        state.loading = false;
-      })
-
-      .addCase(getTestConfig.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getTestConfig.fulfilled, (state, action) => {
-        state.background = action.payload.background as string;
-        state.path = action.payload.path;
-        state.loading = false;
-      })
-      .addCase(getTestConfig.rejected, (state) => {
-        state.loading = false;
-      })
-      .addCase(getTests.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getTests.fulfilled, (state, action) => {
-        state.totalTests = action.payload;
         state.loading = false;
       });
   }

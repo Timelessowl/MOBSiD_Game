@@ -6,7 +6,7 @@ import {AppRoute} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
 import {addQuestionAction, addToTestPath, getTestConfig, setTestBackground} from '../../store/api-actions';
-import {getTotalTests} from '../../store/game-data/selectors';
+import {getAllTests} from '../../store/tests-data/selectors';
 import {JSONObject} from "../../types/types";
 
 
@@ -14,7 +14,7 @@ const AdminScreen: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
-  const totalTests = useAppSelector(getTotalTests);
+  const totalTests = useAppSelector(getAllTests);
   const [answer, setAnswer] = useState('');
   const [question, setQuestion] = useState('');
   const [OptionsSwitch, setOptionsSwitch] = useState(false);
@@ -23,6 +23,7 @@ const AdminScreen: React.FC = () => {
   const [positionX, setPositionX] = useState(0);
   const [positionY, setPositionY] = useState(0);
   const [testId, setTestId] = useState(1);
+  const allowSubmit = true;
 
   useEffect(() => {
     if (!user?.user.isSuperUser) {
@@ -79,6 +80,12 @@ const AdminScreen: React.FC = () => {
       )) }
   };
 
+  const SubmitNewTest = (evt: FormEvent) => {
+    evt.preventDefault();
+
+    console.log('testetsterst')
+  };
+
   const handleBackgroundInput= (e : ChangeEvent<HTMLInputElement>) => {
     const files = (e.target as HTMLInputElement).files;
     if (files !== null) {
@@ -100,13 +107,11 @@ const AdminScreen: React.FC = () => {
       <div style={{ display: 'flex', height: 'calc(100vh - 3rem)', paddingLeft: '3rem'}}>
         <div style={{display: 'flex', alignItems: 'right', justifyContent: 'center', height: '50vh'}}>
           <Form onSubmit={submitNewQuestion}>
-            <Label className="question">
-              Введите вопрос
-            </Label>
+
             <FormGroup>
               <Label key={'label'}>
                 Выберите тест для редактирования
-              </Label> ,
+              </Label>
               <Input key={'ans'}
                      id="answerSelect"
                      name="answerSelect"
@@ -115,10 +120,14 @@ const AdminScreen: React.FC = () => {
                      onChange={(e) => setTestId(Number(e.target.value))}
               >
                 {totalTests.map((test, i) =>
-                  <option>{test}</option>
+                  <option>{test['title']}</option>
                 )}
               </Input>
+              <Button onClick={SubmitNewTest} style = {{marginTop: '16px'}}>Создать новый</Button>
             </FormGroup>
+            <Label className="question">
+              Введите вопрос
+            </Label>
             <FormGroup>
               <textarea style={{ flex: 1, padding: '1rem' }}
                 rows={10}

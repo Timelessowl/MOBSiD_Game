@@ -122,9 +122,20 @@ class AppTests (APIView):
     def get(self, request):
         serializer = TestSerializer(TestModel.objects.all(), many=True)
         data = []
-        for i in serializer.data:
-            data.append(i['testId'])
-        return Response(data=data, status=status.HTTP_200_OK)
+        # for i in serializer.data:
+        #     data.append({testId = i['testId']})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AppAddTest (APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+        serializer = TestSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.addNew(data=serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TestConfig(APIView):

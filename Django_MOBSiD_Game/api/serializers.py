@@ -98,6 +98,11 @@ class TestSerializer(serializers.ModelSerializer):
         model = TestModel
         fields = '__all__'
 
+    def addNew(self, data):
+        test_obj = TestModel(title=data['title'], path=data['path'], background=data['background'])
+        test_obj.save()
+        return test_obj
+
     def setBackground(self, data):
         test_obj = TestModel.objects.get(testId=data['testId'])
         test_obj.background = data['background']

@@ -34,4 +34,5 @@ export enum NameSpace {
   Data = 'DATA',
   Game = 'GAME',
   User = 'USER',
+  Test = 'TEST',
 }

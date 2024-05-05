@@ -1,7 +1,8 @@
 /* eslint-disable */
 import React, {FormEvent, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getBackground, getPath, getQuestions, getQuestionsLoading} from '../../store/game-data/selectors';
+import {getQuestions, getQuestionsLoading} from '../../store/game-data/selectors';
+import {getBackground, getPath} from '../../store/tests-data/selectors';
 import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {useNavigate, useParams} from 'react-router-dom';
 import {AppRoute} from '../../const';

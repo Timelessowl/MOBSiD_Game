@@ -4,12 +4,17 @@ import {AuthorizationStatus} from '../const.js';
 import {UserData} from './user-data';
 
 export type GameData = {
-  totalTests : [number],
-  testId :number;
   questions: Questions;
   loading: boolean;
+};
+
+export type TestData = {
+  testId: number;
+  title: string;
   background: File | string;
   path: string;
+  allTest: TestData[];
+  loading: boolean;
 };
 
 export type GameProgress = {

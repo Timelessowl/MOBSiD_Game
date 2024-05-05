@@ -50,6 +50,7 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
 class TestModel(models.Model):
     testId = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=50, default='Test')
     background = models.ImageField(upload_to="uploads")
     path = models.JSONField()
 

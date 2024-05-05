@@ -3,14 +3,15 @@ import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup} from 'reac
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {useAppSelector} from '../../hooks';
-import {getTotalTests} from '../../store/game-data/selectors';
+import {getAllTests} from '../../store/tests-data/selectors';
+import {TestData} from '../../types/state';
 
 
 const LandingScreen: React.FC = () => {
 
 
   const navigate = useNavigate();
-  const totalTests = useAppSelector(getTotalTests);
+  const totalTests: TestData[] = useAppSelector(getAllTests);
 
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
@@ -41,9 +42,9 @@ const LandingScreen: React.FC = () => {
             {
               totalTests.map((test, i) =>
                 (
-                  <FormGroup key={test}>
-                    <Button key={test} variant="primary" onClick={() => handleTestSelect(test)}>
-                      {`Test ${test}`}
+                  <FormGroup key={test['testId']}>
+                    <Button key={test['testId']} variant="primary" onClick={() => handleTestSelect(test['testId'])}>
+                      {`${test['title']}`}
                     </Button>
                   </FormGroup>
                 )
