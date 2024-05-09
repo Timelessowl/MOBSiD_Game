@@ -13,6 +13,7 @@ import {getProgressLoading, getProgress, getPosition} from '../../store/game-pro
 import Load from '../../components/load/load';
 import {store} from "../../store";
 import GameField from "../../components/game-field/game-field";
+import useWebSocket, { ReadyState } from "react-use-websocket"
 
 
 const GameScreen: React.FC = () => {
@@ -52,6 +53,25 @@ const GameScreen: React.FC = () => {
   const [questionIndex, setQuestionIndex] = useState(-1);
   const [prevQuestionIndex, setPrevQuestionIndex] = useState(-1);
   const [currQuestion, setCurrQuestion] = useState<Question>(emptyQuestion);
+
+  const requestProcess = (temperature = 'low') => {
+    const channelId = Math.floor(Math.random() * 10000);
+    const websocket = new WebSocket(
+      `ws://localhost:8000/ws/bar/${channelId}/${temperature}/`
+    );
+    websocket.onmessage = function (e) {
+      let data = JSON.parse(e.data);
+      if (data.type === 'connection_established' || data.type === 'progress') {
+        console.log('TEST')
+      } else if (data.type === 'completed') {
+        console.log('test1')
+      } else if (data.type === 'error') {
+        console.log('test2')
+      }
+    };
+  };
+
+
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
   let successLabel: string;
@@ -213,6 +233,7 @@ const GameScreen: React.FC = () => {
             >
               Следующий
             </Button>
+            <button onClick={() => requestProcess()}>Try WS</button>
           </div>
           <GameField background={backgroundImg} path={path} position={position}/>
         </div>

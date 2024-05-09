@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';

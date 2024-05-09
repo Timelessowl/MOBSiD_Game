@@ -1,14 +1,14 @@
-from django.contrib.auth import get_user_model, login, logout
-from django.http import HttpResponse, HttpResponseNotFound
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .serializers import *
-from rest_framework import permissions, status
-from .validations import custom_validation, validate_email, validate_password
-from .models import *
 import base64
-import os
+
+from django.contrib.auth import login, logout
+from rest_framework import permissions, status
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import *
+from .serializers import *
+from .validations import custom_validation, validate_email, validate_password
 
 
 class UserRegister(APIView):
@@ -128,8 +128,9 @@ class AppTests (APIView):
 
 
 class AppAddTest (APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
 
     def post(self, request):
         serializer = TestSerializer(data=request.data)
