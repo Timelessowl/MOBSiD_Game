@@ -20,7 +20,8 @@ export enum APIRoute {
   SetTestBackground = 'api/set-background',
   SetTestPath = 'api/set-test-path',
   TestConfig = 'api/test-config',
-  Tests = 'api/tests'
+  Tests = 'api/tests',
+  AddTest = 'api/add-test'
 }
 
 export enum AuthorizationStatus {

@@ -105,6 +105,35 @@ export const addQuestionAction = createAsyncThunk<void, Partial<Question>, {
   },
 );
 
+export const addTestAction = createAsyncThunk<void, Partial<TestData & Question>, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'data/addQuestion',
+  async (data, {dispatch, extra: api}) => {
+    await api.post(APIRoute.AddTest,
+      {
+        title: data.title,
+        text: data.text,
+        withOptions: data.withOptions,
+        opt1:data.opt1,
+        opt2:data.opt2,
+        opt3:data.opt3,
+        opt4:data.opt4,
+        opt5:data.opt5,
+        answer: data.answer,
+        path: data.path,
+        background: data.background
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+  },
+);
+
 export const checkUserAnswer = createAsyncThunk<void, CheckAnsData, {
   dispatch: AppDispatch,
   state: State,

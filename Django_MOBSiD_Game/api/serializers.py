@@ -100,8 +100,21 @@ class TestSerializer(serializers.ModelSerializer):
 
     def addNew(self, data):
         test_obj = TestModel(title=data['title'], path=data['path'], background=data['background'])
+
+        question_object = QuestionModel(
+            testId=test_obj,
+            text=data['text'],
+            withOptions=bool(data['withOptions']),
+            answer=data['answer'],
+            opt1=data['opt1'],
+            opt2=data['opt2'],
+            opt3=data['opt3'],
+            opt4=data['opt4'],
+            opt5=data['opt5'],
+        )
         test_obj.save()
-        return test_obj
+        question_object.save()
+        return {'testId': test_obj.testId}
 
     def setBackground(self, data):
         test_obj = TestModel.objects.get(testId=data['testId'])

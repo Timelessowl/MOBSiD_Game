@@ -5,7 +5,13 @@ import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getUserData} from '../../store/user-process/selectors';
-import {addQuestionAction, addToTestPath, getTestConfig, setTestBackground} from '../../store/api-actions';
+import {
+  addQuestionAction,
+  addTestAction,
+  addToTestPath,
+  getTestConfig,
+  setTestBackground
+} from '../../store/api-actions';
 import {getAllTests} from '../../store/tests-data/selectors';
 import {JSONObject} from "../../types/types";
 
@@ -15,6 +21,7 @@ const AdminScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
   const totalTests = useAppSelector(getAllTests);
+
   const [answer, setAnswer] = useState('');
   const [question, setQuestion] = useState('');
   const [OptionsSwitch, setOptionsSwitch] = useState(false);
@@ -23,11 +30,19 @@ const AdminScreen: React.FC = () => {
   const [positionX, setPositionX] = useState(0);
   const [positionY, setPositionY] = useState(0);
   const [testId, setTestId] = useState(1);
-  const allowSubmit = true;
+  const [disableSubmit, setDisableSubmit] = useState(true);
+  const [newTestTitle, setNewTestTitle] = useState('Test');
+  const [newTestSetup, setNewTestSetup] = useState(false)
 
   useEffect(() => {
     if (!user?.user.isSuperUser) {
       navigate(AppRoute.Auth);
+    }
+    if (question !== '' && answer !== ''){
+      newTestSetup ? setDisableSubmit(backgroundImg === undefined): setDisableSubmit(false)
+    }
+    else{
+      setDisableSubmit(true)
     }
   });
 
@@ -50,22 +65,38 @@ const AdminScreen: React.FC = () => {
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
-    dispatch(addQuestionAction({
-      testId: testId,
-      text: question,
-      withOptions: OptionsSwitch,
-      opt1: Options[0],
-      opt2: Options[1],
-      opt3: Options[2],
-      opt4: Options[3],
-      opt5: Options[4],
-      answer: answer
-    }));
-    dispatch(addToTestPath({
-      testId: testId,
-      path: [positionX, positionY]}
-    ))
-
+    if (newTestSetup) {
+      dispatch(addTestAction({
+        title: newTestTitle,
+        text: question,
+        withOptions: OptionsSwitch,
+        opt1: Options[0],
+        opt2: Options[1],
+        opt3: Options[2],
+        opt4: Options[3],
+        opt5: Options[4],
+        answer: answer,
+        background: backgroundImg,
+        path: `{\"1\": [${positionX}, ${positionY}]`
+      }));
+    }
+    else{
+      dispatch(addQuestionAction({
+        testId: testId,
+        text: question,
+        withOptions: OptionsSwitch,
+        opt1: Options[0],
+        opt2: Options[1],
+        opt3: Options[2],
+        opt4: Options[3],
+        opt5: Options[4],
+        answer: answer
+      }));
+      dispatch(addToTestPath({
+          testId: testId,
+          path: [positionX, positionY]
+      }));
+    }
   };
 
   const SubmitBackground = (evt: FormEvent) => {
@@ -80,10 +111,10 @@ const AdminScreen: React.FC = () => {
       )) }
   };
 
-  const SubmitNewTest = (evt: FormEvent) => {
+  const CreateNewTest = (evt: FormEvent) => {
     evt.preventDefault();
+    setNewTestSetup(true)
 
-    console.log('testetsterst')
   };
 
   const handleBackgroundInput= (e : ChangeEvent<HTMLInputElement>) => {
@@ -109,21 +140,39 @@ const AdminScreen: React.FC = () => {
           <Form onSubmit={submitNewQuestion}>
 
             <FormGroup>
-              <Label key={'label'}>
-                Выберите тест для редактирования
-              </Label>
-              <Input key={'ans'}
-                     id="answerSelect"
-                     name="answerSelect"
-                     type="select"
-                     value={testId}
-                     onChange={(e) => setTestId(Number(e.target.value))}
-              >
-                {totalTests.map((test, i) =>
-                  <option>{test['title']}</option>
+              {newTestSetup ?
+                (
+                  <FormGroup>
+                    <Label className="newTitle">
+                      Введите название нового теста
+                    </Label>
+                    <Input
+                      name="newTitle"
+                      placeholder="Title"
+                      type="text"
+                      value={newTestTitle}
+                      onChange={(e) => setNewTestTitle(e.target.value)}
+                    />
+                  </FormGroup>
+                ) : [
+                  <Label key={'title'}>
+                    Выберите тест для редактирования
+                  </Label>,
+                <Input key={'title'}
+                id="title"
+                name="title"
+                type="select"
+                value={testId}
+                onChange={(e) => setTestId(Number(e.target.value))}
+                >
+                {totalTests.map((test) =>
+                  <option key={test['testId']} value={test['testId']}>{test['title']}</option>
+
                 )}
-              </Input>
-              <Button onClick={SubmitNewTest} style = {{marginTop: '16px'}}>Создать новый</Button>
+                </Input>,
+                  <Button onClick={CreateNewTest} style = {{marginTop: '16px'}}>Создать новый</Button>
+                ]
+              }
             </FormGroup>
             <Label className="question">
               Введите вопрос
@@ -212,9 +261,16 @@ const AdminScreen: React.FC = () => {
                 onChange={(e) => setPositionY(Number(e.target.value))}
               />
             </FormGroup>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" disabled={disableSubmit}>
               Submit
             </Button>
+            {newTestSetup ? (
+              <Button variant="primary" type="submit" style={{marginLeft: '16px', backgroundColor: 'red'}}
+              onClick={()=> setNewTestSetup(false)}>
+                Cancel
+              </Button>
+              ) : <div/>
+            }
           </Form>
         </div>
         <div style={{marginLeft:'16px'}}>
@@ -235,9 +291,14 @@ const AdminScreen: React.FC = () => {
               </FormText>
             </FormGroup>
             <FormGroup>
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
+              {newTestSetup ? (
+                <div/>
+                ) : (
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+                )
+              }
             </FormGroup>
           </Form>
         </div>
