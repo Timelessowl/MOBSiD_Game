@@ -77,7 +77,7 @@ const AdminScreen: React.FC = () => {
         opt5: Options[4],
         answer: answer,
         background: backgroundImg,
-        path: `{\"1\": [${positionX}, ${positionY}]`
+        path: `{\"1\": [${positionX}, ${positionY}]}`
       }));
     }
     else{

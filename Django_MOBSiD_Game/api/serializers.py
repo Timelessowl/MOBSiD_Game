@@ -104,7 +104,7 @@ class TestSerializer(serializers.ModelSerializer):
         question_object = QuestionModel(
             testId=test_obj,
             text=data['text'],
-            withOptions=bool(data['withOptions']),
+            withOptions=(data['withOptions'] == "true"),
             answer=data['answer'],
             opt1=data['opt1'],
             opt2=data['opt2'],
