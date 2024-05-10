@@ -19,7 +19,7 @@ export type TestData = {
 
 export type GameProgress = {
   loading: boolean;
-  position: number;
+  positions: string;
   progress: string;
 };
 

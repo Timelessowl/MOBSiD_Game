@@ -18,10 +18,12 @@ export enum APIRoute {
   AddQuestion = '/api/add-question',
   CheckAnswer = '/api/check-answer',
   Progress = 'api/progress',
+  Position = 'api/positions',
   SetTestBackground = 'api/set-background',
   SetTestPath = 'api/set-test-path',
   TestConfig = 'api/test-config',
   Tests = 'api/tests',
+  SetActive = 'api/set-active-test',
   AddTest = 'api/add-test'
 }
 

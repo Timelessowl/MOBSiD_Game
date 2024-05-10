@@ -3,11 +3,11 @@ import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace, FIRST_GAME_STEP, AuthorizationStatus} from '../../const';
 import {GameProgress} from '../../types/state';
 import {Question} from '../../types/question';
-import {checkUserAnswer, getUserProgress} from "../api-actions";
+import {getUsersPosition, getUserProgress} from "../api-actions";
 
 const initialState: GameProgress = {
   loading: true,
-  position: 0,
+  positions: '',
   progress: '',
 };
 
@@ -21,8 +21,11 @@ export const gameProcess = createSlice({
     builder
 
       .addCase(getUserProgress.fulfilled, (state, action) => {
-        state.position = action.payload.position;
-        state.progress = action.payload.progress;
+        state.progress = action.payload;
+        state.loading = false;
+      })
+      .addCase(getUsersPosition.fulfilled, (state, action) => {
+        state.positions = action.payload;
         state.loading = false;
       })
 

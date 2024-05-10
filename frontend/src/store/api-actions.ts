@@ -33,14 +33,14 @@ export const fetchTestsAction = createAsyncThunk<TestData[], undefined, {
   },
 );
 
-export const fetchUsersData = createAsyncThunk<UsersData, undefined, {
+export const fetchUsersData = createAsyncThunk<UsersData, {testId: Number}, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'user/fetchData',
-  async (_arg, {extra: api}) => {
-    const {data} = await api.get<UserData[]>(APIRoute.UsersData);
+  async ({testId}, {extra: api}) => {
+    const {data} = await api.post<UserData[]>(APIRoute.UsersData, {testId: testId});
     return data;
   },
 );
@@ -56,6 +56,21 @@ export const checkAuthAction = createAsyncThunk<UserData, undefined, {
     const {data} = await api.get(APIRoute.User);
     return data;
   },
+);
+
+export const setActiveTest = createAsyncThunk<void, {testId : Number}, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'user/setActiveTest',
+  async ({testId}, {dispatch, extra: api}) => {
+    await api.post(APIRoute.SetActive,
+      {
+        testId: testId
+      });
+  }
 );
 
 export const registrationAction = createAsyncThunk<void, RegisterData, {
@@ -166,7 +181,6 @@ export const checkUserAnswer = createAsyncThunk<void, CheckAnsData, {
         id: questionId,
         answer: userAnswer
       });
-      dispatch(getUserProgress);
   }
 );
 
@@ -196,15 +210,29 @@ export const addToTestPath = createAsyncThunk<void, {testId: number, path: [numb
   },
 );
 
-export const getUserProgress = createAsyncThunk<GameProgress, undefined, {
+export const getUserProgress = createAsyncThunk<string, {testId: Number }, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance,
 
 }>(
   'user/progress',
-  async (_arg, {extra: api}) => {
-    const {data} = await api.get(APIRoute.Progress);
+  async ({testId}, {extra: api}) => {
+    const {data} = await api.post(APIRoute.Progress, {testId: testId});
+    return data;
+
+  },
+);
+
+export const getUsersPosition = createAsyncThunk<string, {testId: Number }, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance,
+
+}>(
+  'user/positions',
+  async ({testId}, {extra: api}) => {
+    const {data} = await api.post(APIRoute.Position, {testId: testId});
     return data;
 
   },

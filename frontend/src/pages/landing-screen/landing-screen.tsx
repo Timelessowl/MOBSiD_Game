@@ -6,6 +6,8 @@ import {AppRoute} from '../../const';
 import {useAppSelector} from '../../hooks';
 import {getAllTests} from '../../store/tests-data/selectors';
 import {TestData} from '../../types/state';
+import {store} from '../../store';
+import {fetchUsersData, setActiveTest} from '../../store/api-actions';
 
 
 const LandingScreen: React.FC = () => {
@@ -20,6 +22,7 @@ const LandingScreen: React.FC = () => {
 
 
   const handleTestSelect = (testId : number) => {
+    store.dispatch(setActiveTest({testId}));
     navigate(`/game/${testId}`);
   };
 

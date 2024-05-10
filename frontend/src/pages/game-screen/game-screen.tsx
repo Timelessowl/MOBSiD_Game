@@ -8,7 +8,14 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {Question} from '../../types/question';
 import {JSONObject} from '../../types/types';
-import {checkUserAnswer, fetchQuestionsAction, getTestConfig, getUserProgress, fetchUsersData} from '../../store/api-actions';
+import {
+  checkUserAnswer,
+  fetchQuestionsAction,
+  getTestConfig,
+  getUserProgress,
+  fetchUsersData,
+  getUsersPosition
+} from '../../store/api-actions';
 import {getProgressLoading, getProgress, getPosition} from '../../store/game-process/selectors';
 import Load from '../../components/load/load';
 import {store} from "../../store";
@@ -21,15 +28,16 @@ const GameScreen: React.FC = () => {
   const {id} = useParams();
   const testId = Number(id)
   const dispatch = useAppDispatch();
-  const position = useAppSelector(getPosition);
+  const positions = useAppSelector(getPosition);
   const path = useAppSelector(getPath)
 
   useEffect(() => {
     store.dispatch(fetchQuestionsAction({testId:testId}));
     store.dispatch(getTestConfig(testId));
-    store.dispatch(fetchUsersData());
+    store.dispatch(fetchUsersData({testId}));
+    store.dispatch(getUserProgress({testId}));
     const timer = setInterval(()=>{
-      store.dispatch(getUserProgress());
+      store.dispatch(getUsersPosition({testId}));
     }, 1000);
     // очистка интервала
     return () => clearInterval(timer);
@@ -64,22 +72,22 @@ const GameScreen: React.FC = () => {
   const [prevQuestionIndex, setPrevQuestionIndex] = useState(-1);
   const [currQuestion, setCurrQuestion] = useState<Question>(emptyQuestion);
 
-  const requestProcess = (temperature = 'low') => {
-    const channelId = Math.floor(Math.random() * 10000);
-    const websocket = new WebSocket(
-      `ws://localhost:8000/ws/bar/${channelId}/${temperature}/`
-    );
-    websocket.onmessage = function (e) {
-      let data = JSON.parse(e.data);
-      if (data.type === 'connection_established' || data.type === 'progress') {
-        console.log(data)
-      } else if (data.type === 'completed') {
-        console.log('completed')
-      } else if (data.type === 'error') {
-        console.log('error')
-      }
-    };
-  };
+  // const requestProcess = (temperature = 'low') => {
+  //   const channelId = Math.floor(Math.random() * 10000);
+  //   const websocket = new WebSocket(
+  //     `ws://localhost:8000/ws/bar/${channelId}/${temperature}/`
+  //   );
+  //   websocket.onmessage = function (e) {
+  //     let data = JSON.parse(e.data);
+  //     if (data.type === 'connection_established' || data.type === 'progress') {
+  //       console.log(data)
+  //     } else if (data.type === 'completed') {
+  //       console.log('completed')
+  //     } else if (data.type === 'error') {
+  //       console.log('error')
+  //     }
+  //   };
+  // };
 
 
 
@@ -87,6 +95,7 @@ const GameScreen: React.FC = () => {
   let successLabel: string = '';
   let triesLabel: string = '';
   let progressParsed: JSONObject = {};
+  let userProgressParsed: JSONObject = {};
 
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
@@ -115,11 +124,14 @@ const GameScreen: React.FC = () => {
     return <Load/>;
   }
 
-  if(progress !== "" && progress !== undefined) {
+  if(progress !== "" && progress !== undefined && user !== undefined) {
     progressParsed = JSON.parse(progress) as JSONObject;
-    if (progressParsed[currQuestion.id] !== undefined) {
-      successLabel = progressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
-      triesLabel = `Использованно ${progressParsed[currQuestion.id][1] as number} попыток`;
+    // userProgressParsed = JSON.parse(String(progressParsed[user.username]))
+    // console.log(progressParsed)
+    // console.log(userProgressParsed)
+    if (userProgressParsed[currQuestion.id] !== undefined) {
+      successLabel = userProgressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
+      triesLabel = `Использованно ${userProgressParsed[currQuestion.id][1] as number} попыток`;
     } else {
       successLabel = '';
       triesLabel = '';
@@ -136,8 +148,8 @@ const GameScreen: React.FC = () => {
 
 
   const disableSubmit = () : boolean|undefined=>
-    (progressParsed[currQuestion.id] !== undefined ? (answer === '' ||
-      progressParsed[currQuestion.id][0] as boolean) : answer === '');
+    (userProgressParsed[currQuestion.id] !== undefined ? (answer === '' ||
+      userProgressParsed[currQuestion.id][0] as boolean) : answer === '');
 
   const getOptionsArray = () : [string] => {
     const options : [string] = [''];
@@ -245,9 +257,9 @@ const GameScreen: React.FC = () => {
             >
               Следующий
             </Button>
-            <button onClick={() => requestProcess()}>Try WS</button>
+            {/*<button onClick={() => requestProcess()}>Try WS</button>*/}
           </div>
-          <GameField background={backgroundImg} path={path} position={position} avatars={[user?.avatar as string]}/>
+          <GameField background={backgroundImg} path={path} positions={positions}/>
         </div>
       </div>
     </div>

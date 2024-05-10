@@ -53,14 +53,24 @@ class AppQuestionsSerializer(serializers.ModelSerializer):
 class UserProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ('position', 'progress')
+        fields = '__all__'
 
     def reset_progress(self):
         pass
 
     def get_progress(self, user_data):
         user_obj = UserModel.objects.get(email=user_data.email)
-        return {'position': user_obj.position, 'progress': user_obj.progress}
+        return user_obj.progress
+
+    def get_position(self, data):
+        user_obj = UserModel.objects.filter(activeTestId=data['testId'])
+        return_data = {}
+        for user in user_obj:
+            return_data.update({user.username: [user.position]})
+            # return_data.update({user.username: json.loads(user.progress)})
+            # print(return_data)
+        return_data = json.dumps(return_data)
+        return return_data
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -93,6 +103,18 @@ class UserLoginSerializer(serializers.Serializer):
         if not user:
             raise ValidationError('user not found')
         return user
+
+
+class UserActiveTestSerializer(serializers.Serializer):
+    class Meta:
+        model = UserModel
+        fields = '__all__'
+
+    def set(self, user_data, request_data):
+        user_obj = UserModel.objects.get(email=user_data.email)
+        user_obj.activeTestId = request_data['testId']
+        user_obj.save()
+        return user_obj.username, user_obj.activeTestId
 
 
 class TestSerializer(serializers.ModelSerializer):

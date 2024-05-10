@@ -1,19 +1,20 @@
 /* eslint-disable */
 import React, {useEffect, useState} from 'react';
-import img from './Cmonya.png';
 import playerLogo from './player.png';
 import {Table} from 'reactstrap';
 import {JSONObject} from "../../types/types";
+import {useAppSelector} from "../../hooks";
+import {getUserData, getUsersData} from "../../store/user-process/selectors";
+import {UserData} from "../../types/user-data";
 
 type Props = {
   background: string,
-  position: number,
+  positions: string,
   path: string,
-  avatars: string[]
 }
 
 const GameField: React.FC<Props> = (props) => {
-  const {background, position, path, avatars} = props;
+  const {background, positions, path} = props;
 
   // useEffect(() => {
   //
@@ -23,6 +24,9 @@ const GameField: React.FC<Props> = (props) => {
 
   const gameFieldRows = 20;
   const gameFieldColumns = 20;
+  const user = useAppSelector(getUserData);
+  const users = useAppSelector(getUsersData);
+  const avatars: string[] = [];
   const cellWidth = `${100 / gameFieldColumns}%`;
   const cellHeight = `${100 / gameFieldRows}%`;
   const gameField: string[][] = [];
@@ -32,12 +36,20 @@ const GameField: React.FC<Props> = (props) => {
       gameField[i][j] = '';
     }
   }
+  let positionsParsed : JSONObject = {};
+  if(positions !== "" && positions !== undefined) {
+    positionsParsed = JSON.parse(positions) as JSONObject;
 
-  if (path !== '') {
+  }
+
+  if (path !== '' && user !== undefined) {
     const pathParsed = JSON.parse(path) as JSONObject;
-    if (pathParsed[position] !== undefined){
-
-      gameField[(pathParsed[position] as number[])[0]][(pathParsed[position] as number[])[1]] = 'kek'
+    if (pathParsed[String(positionsParsed[user.username])] !== undefined){
+      users?.map((_user, i)=>{
+        // console.log('-----------------------------')
+        gameField[(pathParsed[String(positionsParsed[_user.username])] as number[])[0]]
+          [(pathParsed[String(positionsParsed[_user.username])] as number[])[1]] = _user['avatar'];
+      })
     }
   }
 
@@ -55,7 +67,7 @@ const GameField: React.FC<Props> = (props) => {
             (<tr key={`row${gameFieldRows - i}`}>{
               row.map((cell, j)=>
                 (<td key={`row${gameFieldRows - i}column${gameFieldColumns - j}`} style={{backgroundColor:'transparent', width: cellWidth, height: cellHeight}} >{
-                  (cell ? <img src={`data:image/*;base64,${avatars[0]}`} style={{borderRadius: '50%',  width: '50px', height: '50px'}}/> : '')
+                  (cell ? <img src={`data:image/*;base64,${gameField[i][j]}`} style={{borderRadius: '50%',  width: '50px', height: '50px'}}/> : '')
                 }</td>)
               )
             }</tr>)

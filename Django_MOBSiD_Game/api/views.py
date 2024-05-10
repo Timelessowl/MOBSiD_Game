@@ -65,14 +65,12 @@ class UserView(APIView):
 
 
 class UsersView(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
-    # permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     ##
-    def get(self, request):
-        serializer = UserSerializer(AppUser.objects.all(), many=True)
+    def post(self, request):
+        serializer = UserSerializer(AppUser.objects.filter(activeTestId=request.data['testId']), many=True)
         data = serializer.data
         for i in data:
             if i['avatar'] is not None:
@@ -80,6 +78,14 @@ class UsersView(APIView):
                     i['avatar'] = base64.b64encode(image_file.read())
         return Response(data, status=status.HTTP_200_OK)
 
+
+class UserSetActiveTest(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = UserActiveTestSerializer(request.user)
+        return Response(serializer.set(request.user, request.data), status=status.HTTP_200_OK)
 
 class AppAddQuestion(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -123,10 +129,18 @@ class UserProgress(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def get(self, request):
+    def post(self, request):
         serializer = UserProgressSerializer(request.user)
         return Response(serializer.get_progress(user_data=request.user), status=status.HTTP_200_OK)
 
+
+class UsersPosition(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = UserProgressSerializer(request.user)
+        return Response(serializer.get_position(data=request.data), status=status.HTTP_200_OK)
 
 class TestBackground(APIView):
     permission_classes = (permissions.IsAuthenticated,)
