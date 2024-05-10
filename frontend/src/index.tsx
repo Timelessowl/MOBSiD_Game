@@ -5,14 +5,14 @@ import App from './components/app/app';
 import {Provider} from 'react-redux';
 import {store} from './store';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {fetchQuestionsAction, checkAuthAction, getTests} from './store/api-actions';
+import {fetchQuestionsAction, checkAuthAction, fetchTestsAction} from './store/api-actions';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
 store.dispatch(checkAuthAction());
-store.dispatch(getTests());
+store.dispatch(fetchTestsAction());
 
 root.render(
   <React.StrictMode>

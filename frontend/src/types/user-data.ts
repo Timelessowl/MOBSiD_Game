@@ -1,11 +1,10 @@
 
-export type userType = {
+export type UserData = {
   email: string;
   username: string;
   isSuperUser: boolean;
+  avatar: string
 }
-export type UserData = {
-  user: userType;
-};
+export type UsersData = UserData[];
 
 

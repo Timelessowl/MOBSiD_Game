@@ -1,7 +1,7 @@
 import {store} from '../store/index.js';
 import {Questions} from './question.js';
 import {AuthorizationStatus} from '../const.js';
-import {UserData} from './user-data';
+import {UserData, UsersData} from './user-data';
 
 export type GameData = {
   questions: Questions;
@@ -26,6 +26,7 @@ export type GameProgress = {
 export type UserProcess = {
   authorizationStatus: AuthorizationStatus;
   user: UserData | undefined;
+  allUsers: UsersData | undefined;
 };
 
 export type State = ReturnType<typeof store.getState>;

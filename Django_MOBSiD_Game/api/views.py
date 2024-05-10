@@ -9,7 +9,9 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 from .validations import custom_validation, validate_email, validate_password
+from .consumers import ProgressBarConsumer
 
+consumer = ProgressBarConsumer
 
 class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -56,7 +58,27 @@ class UserView(APIView):
     ##
     def get(self, request):
         serializer = UserSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        data = serializer.data
+        with open(data['avatar'].strip("/"), 'rb') as image_file:
+            data['avatar'] = base64.b64encode(image_file.read())
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class UsersView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
+
+    ##
+    def get(self, request):
+        serializer = UserSerializer(AppUser.objects.all(), many=True)
+        data = serializer.data
+        for i in data:
+            if i['avatar'] is not None:
+                with open(i['avatar'].strip("/"), 'rb') as image_file:
+                    i['avatar'] = base64.b64encode(image_file.read())
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class AppAddQuestion(APIView):

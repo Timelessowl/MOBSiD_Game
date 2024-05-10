@@ -2,7 +2,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace} from '../../const';
 import {TestData} from '../../types/state';
-import {getTestConfig, getTests} from '../api-actions';
+import {getTestConfig, fetchTestsAction} from '../api-actions';
 
 const initialState: TestData = {
   testId : 0,
@@ -31,10 +31,10 @@ export const testData = createSlice({
       .addCase(getTestConfig.rejected, (state) => {
         state.loading = false;
       })
-      .addCase(getTests.pending, (state) => {
+      .addCase(fetchTestsAction.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getTests.fulfilled, (state, action) => {
+      .addCase(fetchTestsAction.fulfilled, (state, action) => {
         state.allTest = action.payload;
         state.loading = false;
       });

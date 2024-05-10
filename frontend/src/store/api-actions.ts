@@ -5,7 +5,7 @@ import {AppDispatch, State, TestData} from '../types/state.js';
 import {Question, Questions, CheckAnsData} from '../types/question';
 import {APIRoute} from '../const';
 import {AuthData, RegisterData} from '../types/auth-data';
-import {UserData} from '../types/user-data';
+import {UserData, UsersData} from '../types/user-data';
 import {GameProgress, GameData} from '../types/state'
 
 
@@ -32,6 +32,20 @@ export const fetchTestsAction = createAsyncThunk<TestData[], undefined, {
     return data;
   },
 );
+
+export const fetchUsersData = createAsyncThunk<UsersData, undefined, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/fetchData',
+  async (_arg, {extra: api}) => {
+    const {data} = await api.get<UserData[]>(APIRoute.UsersData);
+    return data;
+  },
+);
+
+
 export const checkAuthAction = createAsyncThunk<UserData, undefined, {
   dispatch: AppDispatch;
   state: State;
@@ -43,14 +57,19 @@ export const checkAuthAction = createAsyncThunk<UserData, undefined, {
     return data;
   },
 );
+
 export const registrationAction = createAsyncThunk<void, RegisterData, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   'user/register',
-  async ({email,username, password, isSuperuser, adminKey}, {dispatch, extra: api}) => {
-    await api.post(APIRoute.Register, {email, username, password, isSuperuser, adminKey});
+  async ({email,username, password, isSuperuser, adminKey, avatar}, {dispatch, extra: api}) => {
+    await api.post(APIRoute.Register, {email, username, password, isSuperuser, adminKey, avatar}, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     dispatch(loginAction({
       email: email,
       password: password,
@@ -209,16 +228,3 @@ export const getTestConfig = createAsyncThunk<TestData, number, {
   },
 );
 
-export const getTests = createAsyncThunk<TestData[], undefined, {
-  dispatch: AppDispatch,
-  state: State,
-  extra: AxiosInstance,
-
-}>(
-  'test/totalTests',
-  async (testId, {extra: api}) => {
-    const {data} = await api.get(APIRoute.Tests);
-    return data;
-
-  },
-);

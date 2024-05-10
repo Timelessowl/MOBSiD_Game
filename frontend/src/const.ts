@@ -11,6 +11,7 @@ export enum AppRoute {
 export enum APIRoute {
   Questions = '/api/questions',
   User = '/api/user',
+  UsersData = 'api/users-data',
   Login = '/api/login',
   Register = '/api/register',
   Logout = '/api/logout',

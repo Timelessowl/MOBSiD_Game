@@ -37,6 +37,7 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
     isSuperUser = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to="users_avatars", default='')
     position = models.IntegerField(default=0)
     progress = models.JSONField(default='')
     USERNAME_FIELD = 'email'

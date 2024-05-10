@@ -9,4 +9,5 @@ export type RegisterData = {
   password: string;
   isSuperuser: boolean;
   adminKey: string;
+  avatar: File;
 };

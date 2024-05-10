@@ -1,9 +1,11 @@
 # chat/consumers.py
 import json
 import time
+from .models import TestModel
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+# from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.exceptions import ValidationError
 
 
@@ -68,22 +70,17 @@ class ProgressBarConsumer(WebsocketConsumer):
 
     def make_cake(self, event):
         message = event["message"]
-        self.send_progress_msg("Gathering Ingredients", 1)
-        self.gather_ingredients()
-        self.send_progress_msg("Preparing the Batter", 2)
-        self.prepare_the_batter()
-        self.send_progress_msg("Preparing Cake Pans", 3)
-        self.prepare_cake_pans()
-        self.send_progress_msg("Baking", 4)
-        try:
-            self.bake()
-        except ValidationError as e:
-            self.send_error_msg(e)
-            return None
-        self.send_progress_msg("Cooling And Frosting", 5)
+
+        # self.send_progress_msg("Baking", 4)
+        # try:
+        #     self.bake()
+        # except ValidationError as e:
+        #     self.send_error_msg(e)
+        #     return None
+        self.handle_progress_change()
         self.cool_and_frost()
         self.send_completed_msg(message.get("message"), message.get("progress"))
-        self.disconnect(1000)
+        # self.disconnect(1000)
 
     def gather_ingredients(self):
         time.sleep(1)
@@ -101,3 +98,9 @@ class ProgressBarConsumer(WebsocketConsumer):
 
     def cool_and_frost(self):
         time.sleep(1)
+
+    def handle_progress_change(self):
+        test_obj = TestModel.objects.get(testId=2)
+        self.send_progress_msg(test_obj.title, 3)
+        time.sleep(5)
+

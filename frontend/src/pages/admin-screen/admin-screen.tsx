@@ -35,7 +35,7 @@ const AdminScreen: React.FC = () => {
   const [newTestSetup, setNewTestSetup] = useState(false)
 
   useEffect(() => {
-    if (!user?.user.isSuperUser) {
+    if (!user?.isSuperUser) {
       navigate(AppRoute.Auth);
     }
     if (question !== '' && answer !== ''){

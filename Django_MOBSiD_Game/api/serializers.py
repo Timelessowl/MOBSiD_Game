@@ -69,14 +69,16 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, clean_data):
-        if clean_data['isSuperuser']:
+        if (clean_data['isSuperuser'] == 'true'):
             user_obj = UserModel.objects.create_superuser(email=clean_data['email'], password=clean_data['password'],
                                                           adminkey=clean_data['adminKey'])
             user_obj.username = clean_data['username']
+            user_obj.avatar = clean_data['avatar']
             user_obj.isSuperuser = clean_data['isSuperuser']
         else:
             user_obj = UserModel.objects.create_user(email=clean_data['email'], password=clean_data['password'])
             user_obj.username = clean_data['username']
+            user_obj.avatar = clean_data['avatar']
         user_obj.save()
         return user_obj
 
@@ -137,5 +139,5 @@ class TestSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ('email', 'username', 'isSuperUser')
+        fields = ('email', 'username', 'isSuperUser', 'avatar')
 

@@ -1,11 +1,12 @@
 /* eslint-disable */
-import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
+import {Button, Form, FormGroup, FormText, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import {loginAction, logoutAction, registrationAction} from '../../store/api-actions';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {getAuthorizationStatus, getUserData} from '../../store/user-process/selectors';
+import {getBackground} from "../../store/tests-data/selectors";
 
 
 function AuthScreen(): JSX.Element {
@@ -21,6 +22,7 @@ function AuthScreen(): JSX.Element {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [adminKey, setAdminKey] = useState('');
+  const [userAvatar, setUserAvatar] = useState<File>()
 
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const user = useAppSelector(getUserData);
@@ -31,7 +33,7 @@ function AuthScreen(): JSX.Element {
     }
     else setCurrentUser(false);
 
-  }, [authorizationStatus, user?.user.username]);
+  }, [authorizationStatus, user?.username]);
 
   const submitLogout = (evt: FormEvent) => {
     evt.preventDefault();
@@ -40,14 +42,16 @@ function AuthScreen(): JSX.Element {
 
   const submitRegistration = (evt: FormEvent) => {
     evt.preventDefault();
-    dispatch(registrationAction({
-      email: email,
-      username: username,
-      password: password,
-      isSuperuser: superUserSwitch,
-      adminKey: adminKey
-    }));
-  };
+    if (userAvatar) {
+      dispatch(registrationAction({
+        email: email,
+        username: username,
+        password: password,
+        isSuperuser: superUserSwitch,
+        adminKey: adminKey,
+        avatar: userAvatar
+      }));
+    }};
 
   const submitLogin = (evt: FormEvent) => {
     evt.preventDefault();
@@ -65,12 +69,20 @@ function AuthScreen(): JSX.Element {
     }
   };
 
+  const handleAvatarInput= (e : ChangeEvent<HTMLInputElement>) => {
+    const files = (e.target as HTMLInputElement).files;
+    if (files !== null) {
+      setUserAvatar(files[0])
+    }
+    return 1
+  }
+
   if (currentUser) {
     return (
       <div>
         <Navbar color='dark' dark>
           <NavbarBrand>MOBSiD Authentication</NavbarBrand>
-          {user?.user.isSuperUser ? <NavbarBrand>Admin</NavbarBrand> : <NavbarBrand>Student</NavbarBrand>}
+          {user?.isSuperUser ? <NavbarBrand>Admin</NavbarBrand> : <NavbarBrand>Student</NavbarBrand>}
           <NavItem>
             <form onSubmit={submitLogout}>
               <Button type="submit" color='light' className="form_btn">Log Out</Button>
@@ -98,7 +110,7 @@ function AuthScreen(): JSX.Element {
       </Navbar>
       {
         registrationToggle ? (
-          <div className="registration" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh'}}>
+          <div className="registration" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:'5%'}}>
             <Form onSubmit={submitRegistration}>
               <FormGroup className="mb-3" controlId="formBasicEmail">
                 <Label className="email">
@@ -130,6 +142,21 @@ function AuthScreen(): JSX.Element {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </FormGroup>
+              <FormGroup>
+                <Label for="exampleFile">
+                  Выберите аватар
+                </Label>
+                <Input
+                  id="exampleFile"
+                  name="file"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarInput}
+                />
+                <FormText>
+                  Он будет использован для отображения Вашей позиции на игровом поле
+                </FormText>
               </FormGroup>
               <FormGroup switch>
                 <Input
@@ -200,6 +227,7 @@ function AuthScreen(): JSX.Element {
               </Button>
             </Form>
           </div>
+
         )
       }
     </div>

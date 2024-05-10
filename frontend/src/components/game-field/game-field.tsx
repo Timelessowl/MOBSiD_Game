@@ -8,11 +8,12 @@ import {JSONObject} from "../../types/types";
 type Props = {
   background: string,
   position: number,
-  path: string
+  path: string,
+  avatars: string[]
 }
 
 const GameField: React.FC<Props> = (props) => {
-  const {background, position, path} = props;
+  const {background, position, path, avatars} = props;
 
   // useEffect(() => {
   //
@@ -54,7 +55,7 @@ const GameField: React.FC<Props> = (props) => {
             (<tr key={`row${gameFieldRows - i}`}>{
               row.map((cell, j)=>
                 (<td key={`row${gameFieldRows - i}column${gameFieldColumns - j}`} style={{backgroundColor:'transparent', width: cellWidth, height: cellHeight}} >{
-                  (cell ? <img src={playerLogo}/> : '')
+                  (cell ? <img src={`data:image/*;base64,${avatars[0]}`} style={{borderRadius: '50%',  width: '50px', height: '50px'}}/> : '')
                 }</td>)
               )
             }</tr>)

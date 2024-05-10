@@ -2,18 +2,19 @@
 import React, {FormEvent, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {getQuestions, getQuestionsLoading} from '../../store/game-data/selectors';
-import {getBackground, getPath} from '../../store/tests-data/selectors';
+import {getBackground, getPath, getTestLoading} from '../../store/tests-data/selectors';
 import {Button, Form, FormGroup, Input, Label, Navbar, NavbarBrand, NavItem} from 'reactstrap';
 import {useNavigate, useParams} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import {Question} from '../../types/question';
 import {JSONObject} from '../../types/types';
-import {checkUserAnswer, fetchQuestionsAction, getTestConfig, getUserProgress} from '../../store/api-actions';
+import {checkUserAnswer, fetchQuestionsAction, getTestConfig, getUserProgress, fetchUsersData} from '../../store/api-actions';
 import {getProgressLoading, getProgress, getPosition} from '../../store/game-process/selectors';
 import Load from '../../components/load/load';
 import {store} from "../../store";
 import GameField from "../../components/game-field/game-field";
 import useWebSocket, { ReadyState } from "react-use-websocket"
+import {getUserData} from "../../store/user-process/selectors";
 
 
 const GameScreen: React.FC = () => {
@@ -24,11 +25,16 @@ const GameScreen: React.FC = () => {
   const path = useAppSelector(getPath)
 
   useEffect(() => {
-    store.dispatch(getUserProgress());
     store.dispatch(fetchQuestionsAction({testId:testId}));
     store.dispatch(getTestConfig(testId));
+    store.dispatch(fetchUsersData());
+    const timer = setInterval(()=>{
+      store.dispatch(getUserProgress());
+    }, 1000);
+    // очистка интервала
+    return () => clearInterval(timer);
 
-  }, [dispatch]);
+  }, []);
 
   const emptyQuestion: Question = {
     testId: 0,
@@ -49,6 +55,10 @@ const GameScreen: React.FC = () => {
   const backgroundImg = useAppSelector(getBackground);
   const isProgressLoading = useAppSelector(getProgressLoading);
   const isQuestionsLoading = useAppSelector(getQuestionsLoading);
+  const isConfigLoading = useAppSelector(getTestLoading);
+
+  const user = useAppSelector(getUserData)
+
   const [answer, setAnswer] = useState('');
   const [questionIndex, setQuestionIndex] = useState(-1);
   const [prevQuestionIndex, setPrevQuestionIndex] = useState(-1);
@@ -62,11 +72,11 @@ const GameScreen: React.FC = () => {
     websocket.onmessage = function (e) {
       let data = JSON.parse(e.data);
       if (data.type === 'connection_established' || data.type === 'progress') {
-        console.log('TEST')
+        console.log(data)
       } else if (data.type === 'completed') {
-        console.log('test1')
+        console.log('completed')
       } else if (data.type === 'error') {
-        console.log('test2')
+        console.log('error')
       }
     };
   };
@@ -74,8 +84,9 @@ const GameScreen: React.FC = () => {
 
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
-  let successLabel: string;
-  let triesLabel: string;
+  let successLabel: string = '';
+  let triesLabel: string = '';
+  let progressParsed: JSONObject = {};
 
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
@@ -100,18 +111,19 @@ const GameScreen: React.FC = () => {
     setQuestionIndex(questionIndex + 1);
   };
 
-  if (isProgressLoading || isQuestionsLoading){
+  if (isProgressLoading || isQuestionsLoading || isConfigLoading){
     return <Load/>;
   }
 
-  const progressParsed = JSON.parse(progress) as JSONObject;
-  if (progressParsed[currQuestion.id] !== undefined){
-    successLabel = progressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
-    triesLabel = `Использованно ${progressParsed[currQuestion.id][1] as number} попыток`;
-  }
-  else {
-    successLabel = '';
-    triesLabel = '';
+  if(progress !== "" && progress !== undefined) {
+    progressParsed = JSON.parse(progress) as JSONObject;
+    if (progressParsed[currQuestion.id] !== undefined) {
+      successLabel = progressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
+      triesLabel = `Использованно ${progressParsed[currQuestion.id][1] as number} попыток`;
+    } else {
+      successLabel = '';
+      triesLabel = '';
+    }
   }
 
   if (questionIndex === -1 && questions[0] !== undefined) {
@@ -235,7 +247,7 @@ const GameScreen: React.FC = () => {
             </Button>
             <button onClick={() => requestProcess()}>Try WS</button>
           </div>
-          <GameField background={backgroundImg} path={path} position={position}/>
+          <GameField background={backgroundImg} path={path} position={position} avatars={[user?.avatar as string]}/>
         </div>
       </div>
     </div>
