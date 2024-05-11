@@ -58,7 +58,7 @@ export const checkAuthAction = createAsyncThunk<UserData, undefined, {
   },
 );
 
-export const setActiveTest = createAsyncThunk<void, {testId : Number}, {
+export const setActiveTest = createAsyncThunk<UserData, {testId : Number | null}, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance,
@@ -66,10 +66,11 @@ export const setActiveTest = createAsyncThunk<void, {testId : Number}, {
 }>(
   'user/setActiveTest',
   async ({testId}, {dispatch, extra: api}) => {
-    await api.post(APIRoute.SetActive,
+    const {data} = await api.post(APIRoute.SetActive,
       {
         testId: testId
       });
+    return data
   }
 );
 

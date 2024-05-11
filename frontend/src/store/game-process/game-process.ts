@@ -6,7 +6,8 @@ import {Question} from '../../types/question';
 import {getUsersPosition, getUserProgress} from "../api-actions";
 
 const initialState: GameProgress = {
-  loading: true,
+  progressLoading: true,
+  positionLoading: true,
   positions: '',
   progress: '',
 };
@@ -22,11 +23,11 @@ export const gameProcess = createSlice({
 
       .addCase(getUserProgress.fulfilled, (state, action) => {
         state.progress = action.payload;
-        state.loading = false;
+        state.progressLoading = false;
       })
       .addCase(getUsersPosition.fulfilled, (state, action) => {
         state.positions = action.payload;
-        state.loading = false;
+        state.positionLoading = false;
       })
 
   }

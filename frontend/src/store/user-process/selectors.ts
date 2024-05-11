@@ -7,3 +7,4 @@ export const getAuthorizationStatus = (state: Pick<State, NameSpace.User>): Auth
 export const getAuthCheckedStatus = (state: Pick<State, NameSpace.User>): boolean => state[NameSpace.User].authorizationStatus !== AuthorizationStatus.Unknown;
 export const getUserData = (state: State): UserData | undefined => state[NameSpace.User].user as UserData;
 export const getUsersData = (state: State): UsersData | undefined => state[NameSpace.User].allUsers as UsersData;
+export const getUserLoading = (state: State): boolean => state[NameSpace.User].loading as boolean;

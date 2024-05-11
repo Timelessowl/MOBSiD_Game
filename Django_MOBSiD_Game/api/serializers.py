@@ -114,7 +114,7 @@ class UserActiveTestSerializer(serializers.Serializer):
         user_obj = UserModel.objects.get(email=user_data.email)
         user_obj.activeTestId = request_data['testId']
         user_obj.save()
-        return user_obj.username, user_obj.activeTestId
+        return {'activeTestId': user_obj.activeTestId}
 
 
 class TestSerializer(serializers.ModelSerializer):

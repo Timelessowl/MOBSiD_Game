@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Form, Button, Navbar, NavbarBrand, NavItem, Label, FormGroup} from 'reactstrap';
 import {useNavigate} from 'react-router-dom';
 import {AppRoute} from '../../const';
@@ -7,7 +7,14 @@ import {useAppSelector} from '../../hooks';
 import {getAllTests} from '../../store/tests-data/selectors';
 import {TestData} from '../../types/state';
 import {store} from '../../store';
-import {fetchUsersData, setActiveTest} from '../../store/api-actions';
+import {
+  fetchQuestionsAction,
+  fetchUsersData,
+  getTestConfig, getUserProgress,
+  getUsersPosition,
+  setActiveTest
+} from '../../store/api-actions';
+import {setActiveTestId} from '../../store/action';
 import {getUserData} from '../../store/user-process/selectors';
 
 
@@ -18,14 +25,19 @@ const LandingScreen: React.FC = () => {
   const totalTests: TestData[] = useAppSelector(getAllTests);
   const user = useAppSelector(getUserData)
 
+  useEffect(() => {
+
+  }, [user?.activeTestId]);
+
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
   );
 
 
   const handleTestSelect = (testId : number) => {
-    if (user?.activeTestId === undefined){
+    if (user?.activeTestId === null){
       store.dispatch(setActiveTest({testId}));
+      store.dispatch(setActiveTestId(testId));
       navigate(`/game/${testId}`);
     }
     else {
@@ -57,7 +69,7 @@ const LandingScreen: React.FC = () => {
                     <Button key={test['testId']}
                             variant="primary"
                             onClick={() => handleTestSelect(test['testId'])}
-                            disabled={(user?.activeTestId !== test['testId']) || user?.activeTestId === undefined}
+                            disabled={(user?.activeTestId !== test['testId']) && user?.activeTestId !== null}
                     >
                       {`${test['title']}`}
                     </Button>

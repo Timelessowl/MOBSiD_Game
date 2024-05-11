@@ -18,7 +18,8 @@ export type TestData = {
 };
 
 export type GameProgress = {
-  loading: boolean;
+  progressLoading: boolean;
+  positionLoading: boolean;
   positions: string;
   progress: string;
 };
@@ -27,6 +28,7 @@ export type UserProcess = {
   authorizationStatus: AuthorizationStatus;
   user: UserData | undefined;
   allUsers: UsersData | undefined;
+  loading: boolean;
 };
 
 export type State = ReturnType<typeof store.getState>;

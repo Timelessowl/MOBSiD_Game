@@ -60,20 +60,18 @@ const GameField: React.FC<Props> = (props) => {
 
   if (path !== '' && user !== undefined) {
     const pathParsed = JSON.parse(path) as JSONObject;
-    if (pathParsed[String(positionsParsed[user.username])] !== undefined){
-      users?.map((_user, i)=>{
+      users?.map((_user, i)=> {
         const _userPosition = String(positionsParsed[_user.username]);   // {'username': 'position'}
         let _userLocation = pathParsed[_userPosition] as number[];     // {'position': [x, y]}
-
-        if (gameField[_userLocation[1]][_userLocation[0]] === ''){
-          gameField[_userLocation[1]][_userLocation[0]] = _user['avatar'];
-        }
-        else {
-          _userLocation = findEmptyCell(_userLocation[0], _userLocation[1])
-          gameField[_userLocation[1]][_userLocation[0]] = _user['avatar'];
+        if (_userLocation !== undefined) {
+          if (gameField[_userLocation[1]][_userLocation[0]] === '') {
+            gameField[_userLocation[1]][_userLocation[0]] = _user['avatar'];
+          } else {
+            _userLocation = findEmptyCell(_userLocation[0], _userLocation[1])
+            gameField[_userLocation[1]][_userLocation[0]] = _user['avatar'];
+          }
         }
       })
-    }
   }
   return (
 

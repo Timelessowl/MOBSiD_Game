@@ -14,13 +14,13 @@ import {
   getTestConfig,
   getUserProgress,
   fetchUsersData,
-  getUsersPosition
+  getUsersPosition, setActiveTest
 } from '../../store/api-actions';
-import {getProgressLoading, getProgress, getPosition} from '../../store/game-process/selectors';
+import {getProgressLoading, getProgress, getPosition, getPositionLoading} from '../../store/game-process/selectors';
 import Load from '../../components/load/load';
 import {store} from "../../store";
 import GameField from "../../components/game-field/game-field";
-import {getUserData} from "../../store/user-process/selectors";
+import {getUserData, getUserLoading} from '../../store/user-process/selectors';
 
 
 const GameScreen: React.FC = () => {
@@ -62,8 +62,10 @@ const GameScreen: React.FC = () => {
 
   const backgroundImg = useAppSelector(getBackground);
   const isProgressLoading = useAppSelector(getProgressLoading);
+  const isPositionLoading = useAppSelector(getPositionLoading);
   const isQuestionsLoading = useAppSelector(getQuestionsLoading);
   const isConfigLoading = useAppSelector(getTestLoading);
+  const isUserLoading = useAppSelector(getUserLoading);
 
   const user = useAppSelector(getUserData)
 
@@ -76,24 +78,7 @@ const GameScreen: React.FC = () => {
   if (user?.activeTestId !== testId){
     navigate(AppRoute.Root)
   }
-  // const requestProcess = (temperature = 'low') => {
-  //   const channelId = Math.floor(Math.random() * 10000);
-  //   const websocket = new WebSocket(
-  //     `ws://localhost:8000/ws/bar/${channelId}/${temperature}/`
-  //   );
-  //   websocket.onmessage = function (e) {
-  //     let data = JSON.parse(e.data);
-  //     if (data.type === 'connection_established' || data.type === 'progress') {
-  //       console.log(data)
-  //     } else if (data.type === 'completed') {
-  //       console.log('completed')
-  //     } else if (data.type === 'error') {
-  //       console.log('error')
-  //     }
-  //   };
-  // };
 
-  // console.log(user)
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
   let successLabel: string = '';
@@ -124,7 +109,7 @@ const GameScreen: React.FC = () => {
     setQuestionIndex(questionIndex + 1);
   };
 
-  if (isProgressLoading || isQuestionsLoading || isConfigLoading){
+  if (isProgressLoading || isQuestionsLoading || isConfigLoading || isUserLoading || isPositionLoading){
     return <Load/>;
   }
   if(progress !== "" && progress !== undefined && user !== undefined) {
@@ -187,7 +172,7 @@ const GameScreen: React.FC = () => {
         <div style={{ display: 'block', height: 'calc(100vh - 3rem)', paddingLeft: '3rem'}}>
           <div style={{display: 'block', alignItems: 'right', justifyContent: 'center', height: '50vh'}}>
             <Form onSubmit={submitAnswer}>
-              <Label className='question'>
+              <Label className='question' >
                 {currQuestion.text}
               </Label>
               {currQuestion.withOptions ?
@@ -258,7 +243,15 @@ const GameScreen: React.FC = () => {
             >
               Следующий
             </Button>
-
+            < Button variant="primary"
+                     onClick={()=>{
+                       store.dispatch(setActiveTest({testId:null}));
+                       navigate(AppRoute.Root)
+                     }}
+                     // disabled={questions[questionIndex + 1] === undefined}
+            >
+              Закончить попытку
+            </Button>
             {/*<button onClick={() => requestProcess()}>Try WS</button>*/}
           </div>
           <GameField background={backgroundImg} path={path} positions={positions}/>

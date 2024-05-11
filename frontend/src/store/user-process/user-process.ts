@@ -1,12 +1,14 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace, AuthorizationStatus} from '../../const';
 import {UserProcess} from '../../types/state';
-import {checkAuthAction, loginAction, logoutAction, fetchUsersData} from '../api-actions';
+import {checkAuthAction, loginAction, logoutAction, fetchUsersData, setActiveTest} from '../api-actions';
+import {setActiveTestId} from '../action';
 
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.Unknown,
   user: undefined,
   allUsers: undefined,
+  loading: true,
 };
 
 export const userProcess = createSlice({
@@ -16,6 +18,7 @@ export const userProcess = createSlice({
   extraReducers(builder) {
     builder
       .addCase(checkAuthAction.fulfilled, (state, action) => {
+        state.loading = false;
         state.authorizationStatus = AuthorizationStatus.Auth;
         state.user = action.payload;
       })
@@ -23,6 +26,7 @@ export const userProcess = createSlice({
         state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
       .addCase(loginAction.fulfilled, (state) => {
+        state.loading = false;
         state.authorizationStatus = AuthorizationStatus.Auth;
       })
       .addCase(loginAction.rejected, (state) => {
@@ -31,6 +35,17 @@ export const userProcess = createSlice({
       .addCase(logoutAction.fulfilled, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
+      .addCase(setActiveTest.fulfilled, (state, action) => {
+        if (state.user){
+          state.user.activeTestId = action.payload.activeTestId;
+        }
+      })
+      .addCase(setActiveTestId, (state, action) => {
+        if (state.user){
+          state.user.activeTestId = action.payload;
+        }
+      })
+
       .addCase(fetchUsersData.fulfilled, (state, action) => {
         state.allUsers = action.payload;
       });
