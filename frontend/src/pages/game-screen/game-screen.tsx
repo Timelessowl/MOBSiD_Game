@@ -20,7 +20,6 @@ import {getProgressLoading, getProgress, getPosition} from '../../store/game-pro
 import Load from '../../components/load/load';
 import {store} from "../../store";
 import GameField from "../../components/game-field/game-field";
-import useWebSocket, { ReadyState } from "react-use-websocket"
 import {getUserData} from "../../store/user-process/selectors";
 
 
@@ -30,19 +29,20 @@ const GameScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const positions = useAppSelector(getPosition);
   const path = useAppSelector(getPath)
+  const progress = useAppSelector(getProgress);
 
   useEffect(() => {
     store.dispatch(fetchQuestionsAction({testId:testId}));
     store.dispatch(getTestConfig(testId));
     store.dispatch(fetchUsersData({testId}));
-    store.dispatch(getUserProgress({testId}));
     const timer = setInterval(()=>{
       store.dispatch(getUsersPosition({testId}));
+      store.dispatch(getUserProgress({testId}));
     }, 1000);
     // очистка интервала
     return () => clearInterval(timer);
 
-  }, []);
+  }, [progress]);
 
   const emptyQuestion: Question = {
     testId: 0,
@@ -59,7 +59,7 @@ const GameScreen: React.FC = () => {
 
   const navigate = useNavigate();
   const questions = useAppSelector(getQuestions);
-  const progress = useAppSelector(getProgress);
+
   const backgroundImg = useAppSelector(getBackground);
   const isProgressLoading = useAppSelector(getProgressLoading);
   const isQuestionsLoading = useAppSelector(getQuestionsLoading);
@@ -72,6 +72,10 @@ const GameScreen: React.FC = () => {
   const [prevQuestionIndex, setPrevQuestionIndex] = useState(-1);
   const [currQuestion, setCurrQuestion] = useState<Question>(emptyQuestion);
 
+
+  if (user?.activeTestId !== testId){
+    navigate(AppRoute.Root)
+  }
   // const requestProcess = (temperature = 'low') => {
   //   const channelId = Math.floor(Math.random() * 10000);
   //   const websocket = new WebSocket(
@@ -89,7 +93,7 @@ const GameScreen: React.FC = () => {
   //   };
   // };
 
-
+  // console.log(user)
 
   const uuid = ['opt1', 'opt2', 'opt3', 'opt4', 'opt5'];
   let successLabel: string = '';
@@ -123,15 +127,12 @@ const GameScreen: React.FC = () => {
   if (isProgressLoading || isQuestionsLoading || isConfigLoading){
     return <Load/>;
   }
-
   if(progress !== "" && progress !== undefined && user !== undefined) {
     progressParsed = JSON.parse(progress) as JSONObject;
     // userProgressParsed = JSON.parse(String(progressParsed[user.username]))
-    // console.log(progressParsed)
-    // console.log(userProgressParsed)
-    if (userProgressParsed[currQuestion.id] !== undefined) {
-      successLabel = userProgressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
-      triesLabel = `Использованно ${userProgressParsed[currQuestion.id][1] as number} попыток`;
+    if (progressParsed[currQuestion.id] !== undefined) {
+      successLabel = progressParsed[currQuestion.id][0] ? 'На этот вопрос уже дан правильный ответ' : '';
+      triesLabel = `Использованно ${progressParsed[currQuestion.id][1] as number} попыток`;
     } else {
       successLabel = '';
       triesLabel = '';
@@ -257,6 +258,7 @@ const GameScreen: React.FC = () => {
             >
               Следующий
             </Button>
+
             {/*<button onClick={() => requestProcess()}>Try WS</button>*/}
           </div>
           <GameField background={backgroundImg} path={path} positions={positions}/>

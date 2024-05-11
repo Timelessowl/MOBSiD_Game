@@ -8,6 +8,7 @@ import {getAllTests} from '../../store/tests-data/selectors';
 import {TestData} from '../../types/state';
 import {store} from '../../store';
 import {fetchUsersData, setActiveTest} from '../../store/api-actions';
+import {getUserData} from '../../store/user-process/selectors';
 
 
 const LandingScreen: React.FC = () => {
@@ -15,6 +16,7 @@ const LandingScreen: React.FC = () => {
 
   const navigate = useNavigate();
   const totalTests: TestData[] = useAppSelector(getAllTests);
+  const user = useAppSelector(getUserData)
 
   const handleAuthButtonClick = () => (
     navigate(AppRoute.Auth)
@@ -22,8 +24,13 @@ const LandingScreen: React.FC = () => {
 
 
   const handleTestSelect = (testId : number) => {
-    store.dispatch(setActiveTest({testId}));
-    navigate(`/game/${testId}`);
+    if (user?.activeTestId === undefined){
+      store.dispatch(setActiveTest({testId}));
+      navigate(`/game/${testId}`);
+    }
+    else {
+      navigate(`/game/${testId}`);
+    }
   };
 
   return (
@@ -47,7 +54,11 @@ const LandingScreen: React.FC = () => {
               totalTests.map((test, i) =>
                 (
                   <FormGroup key={test['testId']}>
-                    <Button key={test['testId']} variant="primary" onClick={() => handleTestSelect(test['testId'])}>
+                    <Button key={test['testId']}
+                            variant="primary"
+                            onClick={() => handleTestSelect(test['testId'])}
+                            disabled={(user?.activeTestId !== test['testId']) || user?.activeTestId === undefined}
+                    >
                       {`${test['title']}`}
                     </Button>
                   </FormGroup>

@@ -161,5 +161,5 @@ class TestSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ('email', 'username', 'isSuperUser', 'avatar')
+        fields = ('email', 'username', 'isSuperUser', 'avatar', 'activeTestId')
 

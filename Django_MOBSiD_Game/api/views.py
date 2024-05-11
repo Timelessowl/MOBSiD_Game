@@ -104,6 +104,8 @@ class AppQuestions(APIView):
 
     def post(self, request):
         serializer = AppQuestionsSerializer(QuestionModel.objects.filter(testId=request.data['testId']), many=True)
+        for i in serializer.data:
+            i['answer'] = ''
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
