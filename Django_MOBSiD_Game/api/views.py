@@ -172,6 +172,49 @@ class AppAddTest (APIView):
         return Response(serializer.addNew(data=request.data), status=status.HTTP_200_OK)
 
 
+class AppSetTimer(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = TimerSerializer()
+        return Response(serializer.setTimer(data=request.data), status=status.HTTP_200_OK)
+
+
+class AppGetTimer (APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+
+    def post(self, request):
+        serializer = TimerSerializer()
+        return Response(serializer.getTimer(data=request.data), status=status.HTTP_200_OK)
+
+
+class TestSetQuestion(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = TestSerializer()
+        return Response(serializer.setQuestion(data=request.data), status=status.HTTP_200_OK)
+
+
+class TestGetQuestion (APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+
+    def post(self, request):
+        serializer = TestSerializer()
+        return Response(serializer.getQuestion(data=request.data), status=status.HTTP_200_OK)
+
+
+
 class TestConfig(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()

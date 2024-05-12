@@ -200,6 +200,58 @@ export const setTestBackground = createAsyncThunk<void, Partial<TestData>, {
   },
 );
 
+
+export const getTestTimer = createAsyncThunk<string, {testId: Number, questionId: Number}, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'test/getTimer',
+  async ({testId, questionId}, {extra: api}) => {
+    const {data} = await api.post<string>(APIRoute.GetTestTimer, {testId: testId, questionId: questionId});
+    return data;
+  },
+);
+
+export const setTestTimer = createAsyncThunk<string, {testId: Number}, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'test/setTimer',
+  async ({testId}, {extra: api}) => {
+    const {data} = await api.post<string>(APIRoute.SetTestTimer, {testId: testId});
+
+    return data;
+  },
+);
+
+
+export const getTestQuestion = createAsyncThunk<number, {testId: Number}, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'test/getQuestion',
+  async ({testId}, {extra: api}) => {
+    const {data} = await api.post<number>(APIRoute.GetTestQuestion, {testId: testId});
+    return data;
+  },
+);
+
+export const setTestQuestion = createAsyncThunk<number, {testId: Number, currentQuestion: number}, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'test/setQuestion',
+  async ({testId, currentQuestion}, {extra: api}) => {
+    const {data} = await api.post<number>(APIRoute.SetTestQuestion, {testId: testId, currentQuestion: currentQuestion});
+
+    return data;
+  },
+);
+
 export const addToTestPath = createAsyncThunk<void, {testId: number, path: [number, number]}, {
   dispatch: AppDispatch;
   state: State;

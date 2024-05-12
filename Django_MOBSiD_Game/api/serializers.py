@@ -1,4 +1,19 @@
 import json
+import time
+from datetime import tzinfo, timedelta, datetime, date
+
+ZERO = timedelta(0)
+
+class UTC(tzinfo):
+  def utcoffset(self, dt):
+    return ZERO
+  def tzname(self, dt):
+    return "UTC"
+  def dst(self, dt):
+    return ZERO
+
+utc = UTC()
+
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -117,6 +132,28 @@ class UserActiveTestSerializer(serializers.Serializer):
         return {'activeTestId': user_obj.activeTestId}
 
 
+class TimerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionModel
+        fields = 'timer'
+
+    def setTimer(self, data):
+        test_obj = TestModel.objects.get(testId=data['testId'])
+        questions = QuestionModel.objects.filter(testId=data['testId'])
+        test_obj.timer = datetime.now(utc)
+        test_obj.save()
+        return test_obj.timer
+
+    def getTimer(self, data):
+        test_obj = TestModel.objects.get(testId=data['testId'])
+        question = QuestionModel.objects.get(id=data['questionId'])
+        quest_timer = datetime.combine(date.min, question.timer) - datetime.min
+        remaining_time = quest_timer - (datetime.now(utc) - test_obj.timer)
+        # remaining_time = seconds
+        # test_obj.save()
+        return remaining_time
+
+
 class TestSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestModel
@@ -157,6 +194,16 @@ class TestSerializer(serializers.ModelSerializer):
         test_obj.path = json.dumps(path)
         test_obj.save()
         return test_obj.path
+
+    def setQuestion(self, data):
+        test_obj = TestModel.objects.get(testId=data['testId'])
+        test_obj.currentQuestion = data['currentQuestion']
+        test_obj.save()
+        return test_obj.currentQuestion
+
+    def getQuestion(self, data):
+        test_obj = TestModel.objects.get(testId=data['testId'])
+        return test_obj.currentQuestion
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

@@ -12,7 +12,7 @@ import {
   fetchUsersData,
   getTestConfig, getUserProgress,
   getUsersPosition,
-  setActiveTest
+  setActiveTest, setTestTimer
 } from '../../store/api-actions';
 import {setActiveTestId} from '../../store/action';
 import {getUserData} from '../../store/user-process/selectors';
@@ -38,6 +38,7 @@ const LandingScreen: React.FC = () => {
     if (user?.activeTestId === null){
       store.dispatch(setActiveTest({testId}));
       store.dispatch(setActiveTestId(testId));
+      store.dispatch(setTestTimer({testId: testId}))
       navigate(`/game/${testId}`);
     }
     else {

@@ -54,6 +54,8 @@ class TestModel(models.Model):
     title = models.CharField(max_length=50, default='Test')
     background = models.ImageField(upload_to="uploads")
     path = models.JSONField()
+    timer = models.DateTimeField(default='00')
+    currentQuestion = models.IntegerField(default=1)
 
     objects = models.Manager()
 
@@ -65,6 +67,7 @@ class QuestionModel(models.Model):
     testId = models.ForeignKey(TestModel, on_delete=models.CASCADE)
     text = models.CharField(max_length=200, null=True)
     withOptions = models.BooleanField(default=False)
+    timer = models.TimeField(default='00:10:00')
     opt1 = models.CharField(max_length=200, null=True, blank=True)
     opt2 = models.CharField(max_length=200, null=True, blank=True)
     opt3 = models.CharField(max_length=200, null=True, blank=True)
