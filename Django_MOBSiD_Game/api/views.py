@@ -1,4 +1,5 @@
 import base64
+from urllib.parse import unquote
 
 from django.contrib.auth import login, logout
 from rest_framework import permissions, status
@@ -12,6 +13,7 @@ from .validations import custom_validation, validate_email, validate_password
 from .consumers import ProgressBarConsumer
 
 consumer = ProgressBarConsumer
+
 
 class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -59,8 +61,8 @@ class UserView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         data = serializer.data
-        with open(data['avatar'].strip("/"), 'rb') as image_file:
-            data['avatar'] = base64.b64encode(image_file.read())
+        with open(unquote(data["avatar"]).strip("/"), "rb") as image_file:
+            data["avatar"] = base64.b64encode(image_file.read())
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -70,12 +72,14 @@ class UsersView(APIView):
 
     ##
     def post(self, request):
-        serializer = UserSerializer(AppUser.objects.filter(activeTestId=request.data['testId']), many=True)
+        serializer = UserSerializer(
+            AppUser.objects.filter(activeTestId=request.data["testId"]), many=True
+        )
         data = serializer.data
         for i in data:
-            if i['avatar'] is not None:
-                with open(i['avatar'].strip("/"), 'rb') as image_file:
-                    i['avatar'] = base64.b64encode(image_file.read())
+            if i["avatar"] is not None:
+                with open(i["avatar"].strip("/"), "rb") as image_file:
+                    i["avatar"] = base64.b64encode(image_file.read())
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -85,7 +89,10 @@ class UserSetActiveTest(APIView):
 
     def post(self, request):
         serializer = UserActiveTestSerializer(request.user)
-        return Response(serializer.set(request.user, request.data), status=status.HTTP_200_OK)
+        return Response(
+            serializer.set(request.user, request.data), status=status.HTTP_200_OK
+        )
+
 
 class AppAddQuestion(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -103,9 +110,11 @@ class AppQuestions(APIView):
     authentication_classes = ()
 
     def post(self, request):
-        serializer = AppQuestionsSerializer(QuestionModel.objects.filter(testId=request.data['testId']), many=True)
+        serializer = AppQuestionsSerializer(
+            QuestionModel.objects.filter(testId=request.data["testId"]), many=True
+        )
         for i in serializer.data:
-            i['answer'] = ''
+            i["answer"] = ""
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -114,9 +123,12 @@ class AppAddToPath(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
-        serializer = TestSerializer(TestModel.objects.get(testId=request.data['testId']))
+        serializer = TestSerializer(
+            TestModel.objects.get(testId=request.data["testId"])
+        )
         serializer.addToPath(request.data)
-        return Response(serializer.data['path'], status=status.HTTP_200_OK)
+        return Response(serializer.data["path"], status=status.HTTP_200_OK)
+
 
 class AppCheckAnswer(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -124,7 +136,10 @@ class AppCheckAnswer(APIView):
 
     def post(self, request):
         serializer = AppQuestionsSerializer(data=request.data)
-        return Response(serializer.checkAnswer(user_data=request.user, ques_data=request.data), status=status.HTTP_200_OK)
+        return Response(
+            serializer.checkAnswer(user_data=request.user, ques_data=request.data),
+            status=status.HTTP_200_OK,
+        )
 
 
 class UserProgress(APIView):
@@ -133,7 +148,9 @@ class UserProgress(APIView):
 
     def post(self, request):
         serializer = UserProgressSerializer(request.user)
-        return Response(serializer.get_progress(user_data=request.user), status=status.HTTP_200_OK)
+        return Response(
+            serializer.get_progress(user_data=request.user), status=status.HTTP_200_OK
+        )
 
 
 class UsersPosition(APIView):
@@ -142,7 +159,10 @@ class UsersPosition(APIView):
 
     def post(self, request):
         serializer = UserProgressSerializer(request.user)
-        return Response(serializer.get_position(data=request.data), status=status.HTTP_200_OK)
+        return Response(
+            serializer.get_position(data=request.data), status=status.HTTP_200_OK
+        )
+
 
 class TestBackground(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -150,10 +170,12 @@ class TestBackground(APIView):
 
     def post(self, request):
         serializer = TestSerializer(request.data)
-        return Response(serializer.setBackground(data=request.data), status=status.HTTP_200_OK)
+        return Response(
+            serializer.setBackground(data=request.data), status=status.HTTP_200_OK
+        )
 
 
-class AppTests (APIView):
+class AppTests(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
 
@@ -162,10 +184,9 @@ class AppTests (APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AppAddTest (APIView):
+class AppAddTest(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
-
 
     def post(self, request):
         serializer = TestSerializer(request.data)
@@ -180,17 +201,20 @@ class AppSetTimer(APIView):
 
     def post(self, request):
         serializer = TimerSerializer()
-        return Response(serializer.setTimer(data=request.data), status=status.HTTP_200_OK)
+        return Response(
+            serializer.setTimer(data=request.data), status=status.HTTP_200_OK
+        )
 
 
-class AppGetTimer (APIView):
+class AppGetTimer(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-
     def post(self, request):
         serializer = TimerSerializer()
-        return Response(serializer.getTimer(data=request.data), status=status.HTTP_200_OK)
+        return Response(
+            serializer.getTimer(data=request.data), status=status.HTTP_200_OK
+        )
 
 
 class TestSetQuestion(APIView):
@@ -201,18 +225,20 @@ class TestSetQuestion(APIView):
 
     def post(self, request):
         serializer = TestSerializer()
-        return Response(serializer.setQuestion(data=request.data), status=status.HTTP_200_OK)
+        return Response(
+            serializer.setQuestion(data=request.data), status=status.HTTP_200_OK
+        )
 
 
-class TestGetQuestion (APIView):
+class TestGetQuestion(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-
     def post(self, request):
         serializer = TestSerializer()
-        return Response(serializer.getQuestion(data=request.data), status=status.HTTP_200_OK)
-
+        return Response(
+            serializer.getQuestion(data=request.data), status=status.HTTP_200_OK
+        )
 
 
 class TestConfig(APIView):
@@ -221,10 +247,11 @@ class TestConfig(APIView):
 
     def post(self, request):
 
-        serializer = TestSerializer(TestModel.objects.get(testId=request.data['testId']))
+        serializer = TestSerializer(
+            TestModel.objects.get(testId=request.data["testId"])
+        )
 
         data = serializer.data
-        with open( data['background'].strip("/"), 'rb') as image_file:
-            data['background'] = base64.b64encode(image_file.read())
+        with open((data["background"].decode("utf8")).strip("/"), "rb") as image_file:
+            data["background"] = base64.b64encode(image_file.read())
         return Response(data=data)
-

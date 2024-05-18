@@ -1,8 +1,14 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {NameSpace, AuthorizationStatus} from '../../const';
-import {UserProcess} from '../../types/state';
-import {checkAuthAction, loginAction, logoutAction, fetchUsersData, setActiveTest} from '../api-actions';
-import {setActiveTestId} from '../action';
+import { createSlice } from "@reduxjs/toolkit";
+import { NameSpace, AuthorizationStatus } from "../../const";
+import { UserProcess } from "../../types/state";
+import {
+  checkAuthAction,
+  loginAction,
+  logoutAction,
+  fetchUsersData,
+  setActiveTest,
+} from "../api-actions";
+import { setActiveTestId } from "../action";
 
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.Unknown,
@@ -36,12 +42,12 @@ export const userProcess = createSlice({
         state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
       .addCase(setActiveTest.fulfilled, (state, action) => {
-        if (state.user){
+        if (state.user) {
           state.user.activeTestId = action.payload.activeTestId;
         }
       })
       .addCase(setActiveTestId, (state, action) => {
-        if (state.user){
+        if (state.user) {
           state.user.activeTestId = action.payload;
         }
       })
@@ -49,5 +55,5 @@ export const userProcess = createSlice({
       .addCase(fetchUsersData.fulfilled, (state, action) => {
         state.allUsers = action.payload;
       });
-  }
+  },
 });

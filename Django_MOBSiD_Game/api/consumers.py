@@ -5,6 +5,7 @@ from .models import TestModel
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+
 # from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.exceptions import ValidationError
 
@@ -103,4 +104,3 @@ class ProgressBarConsumer(WebsocketConsumer):
         test_obj = TestModel.objects.get(testId=2)
         self.send_progress_msg(test_obj.title, 3)
         time.sleep(5)
-

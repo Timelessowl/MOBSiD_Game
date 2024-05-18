@@ -1,7 +1,7 @@
-import {GameData} from './state';
+import { GameData } from "./state";
 
 export type Question = {
-  testId : number,
+  testId: number;
   id: number;
   text: string;
   withOptions: boolean;
@@ -23,10 +23,9 @@ export type CurrentQuestion = {
   currAttempt: number;
   quesText: string;
   userAnswer: string;
-}
+};
 
 export type CheckAnsData = {
   questionId: number;
   userAnswer: string;
-}
-
+};

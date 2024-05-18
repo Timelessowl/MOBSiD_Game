@@ -1,14 +1,17 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {NameSpace} from '../../const';
-import {GameData} from '../../types/state';
-import {fetchQuestionsAction, getTestQuestion, setTestQuestion} from '../api-actions';
-import {setTestCurrentQuestion} from '../action';
+import { createSlice } from "@reduxjs/toolkit";
+import { NameSpace } from "../../const";
+import { GameData } from "../../types/state";
+import {
+  fetchQuestionsAction,
+  getTestQuestion,
+  setTestQuestion,
+} from "../api-actions";
+import { setTestCurrentQuestion } from "../action";
 
 const initialState: GameData = {
   currentQuestion: -1,
   questions: [],
   loading: false,
-
 };
 
 export const gameData = createSlice({
@@ -36,5 +39,5 @@ export const gameData = createSlice({
       .addCase(setTestCurrentQuestion, (state, action) => {
         state.currentQuestion = action.payload;
       });
-  }
+  },
 });

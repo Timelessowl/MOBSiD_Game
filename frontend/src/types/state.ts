@@ -1,7 +1,7 @@
-import {store} from '../store/index.js';
-import {Questions} from './question.js';
-import {AuthorizationStatus} from '../const.js';
-import {UserData, UsersData} from './user-data';
+import { store } from "../store/index.js";
+import { Questions } from "./question.js";
+import { AuthorizationStatus } from "../const.js";
+import { UserData, UsersData } from "./user-data";
 
 export type GameData = {
   currentQuestion: number;

@@ -1,17 +1,17 @@
 /* eslint-disable */
-import {createSlice} from '@reduxjs/toolkit';
-import {NameSpace} from '../../const';
-import {TestData} from '../../types/state';
-import {getTestConfig, fetchTestsAction, getTestTimer} from '../api-actions';
+import { createSlice } from "@reduxjs/toolkit";
+import { NameSpace } from "../../const";
+import { TestData } from "../../types/state";
+import { getTestConfig, fetchTestsAction, getTestTimer } from "../api-actions";
 
 const initialState: TestData = {
-  testId : 0,
-  title: 'test',
+  testId: 0,
+  title: "test",
   loading: false,
-  background: '',
-  path:'',
-  timer: '',
-  allTest: []
+  background: "",
+  path: "",
+  timer: "",
+  allTest: [],
 };
 
 export const testData = createSlice({
@@ -42,5 +42,5 @@ export const testData = createSlice({
       .addCase(getTestTimer.fulfilled, (state, action) => {
         state.timer = action.payload;
       });
-  }
+  },
 });
