@@ -78,7 +78,7 @@ class UsersView(APIView):
         data = serializer.data
         for i in data:
             if i["avatar"] is not None:
-                with open(i["avatar"].strip("/"), "rb") as image_file:
+                with open(unquote(i["avatar"]).strip("/"), "rb") as image_file:
                     i["avatar"] = base64.b64encode(image_file.read())
         return Response(data, status=status.HTTP_200_OK)
 
@@ -252,6 +252,6 @@ class TestConfig(APIView):
         )
 
         data = serializer.data
-        with open((data["background"].decode("utf8")).strip("/"), "rb") as image_file:
+        with open((unquote(data["background"])).strip("/"), "rb") as image_file:
             data["background"] = base64.b64encode(image_file.read())
         return Response(data=data)

@@ -101,10 +101,11 @@ const GameScreen: React.FC = () => {
     questions[0] !== undefined &&
     currentQuestionIndex !== -1
   ) {
-    setQuestionIndex(currentQuestionIndex);
+    setQuestionIndex(currentQuestionIndex - 1);
   }
 
   if (prevQuestionIndex !== questionIndex) {
+    console.log('test')
     setCurrQuestion(questions[questionIndex]);
     setPrevQuestionIndex(questionIndex);
   }
@@ -129,7 +130,7 @@ const GameScreen: React.FC = () => {
       store.dispatch(getUserProgress({ testId }));
       // store.dispatch(getTestTimer({testId:1, questionId: 1}))
       store.dispatch(
-        getTestTimer({ testId: testId, questionId: currQuestion.id }),
+        getTestTimer({ testId: testId, questionId: currentQuestionIndex }),
       );
     }, 1000);
     // очистка интервала
@@ -222,8 +223,8 @@ const GameScreen: React.FC = () => {
   }
 
   console.log("-----------------");
-  console.log(fQuestionChanged);
-  console.log(seconds2Timer(Number(timer)));
+  console.log(currentQuestionIndex);
+
 
   const disableSubmit = (): boolean | undefined =>
     userProgressParsed[currQuestion.id] !== undefined
@@ -329,33 +330,32 @@ const GameScreen: React.FC = () => {
                 <Label> Оставшееся время {seconds2Timer(Number(timer))}</Label>
               </FormGroup>
               <FormGroup>
-                <Label>
-                  Кнопки пред и след будут удалены на релизе и пока нужны для
-                  тестов
-                </Label>
-              </FormGroup>
-              <FormGroup>
-                <Button
-                  variant="primary"
-                  onClick={handlePrevious}
-                  disabled={!(questionIndex > 0)}
-                >
-                  Предыдущий
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={handleNext}
-                  disabled={questions[questionIndex + 1] === undefined}
-                >
-                  Следующий
-                </Button>
+              {/*  <Label>*/}
+              {/*    Кнопки пред и след будут удалены на релизе и пока нужны для*/}
+              {/*    тестов*/}
+              {/*  </Label>*/}
+              {/*</FormGroup>*/}
+              {/*<FormGroup>*/}
+              {/*  <Button*/}
+              {/*    variant="primary"*/}
+              {/*    onClick={handlePrevious}*/}
+              {/*    disabled={!(questionIndex > 0)}*/}
+              {/*  >*/}
+              {/*    Предыдущий*/}
+              {/*  </Button>*/}
+              {/*  <Button*/}
+              {/*    variant="primary"*/}
+              {/*    onClick={handleNext}*/}
+              {/*    disabled={questions[questionIndex + 1] === undefined}*/}
+              {/*  >*/}
+              {/*    Следующий*/}
+              {/*  </Button>*/}
                 <Button
                   variant="primary"
                   onClick={() => {
                     store.dispatch(setActiveTest({ testId: null }));
                     navigate(AppRoute.Root);
                   }}
-                  // disabled={questions[questionIndex + 1] === undefined}
                 >
                   Закончить попытку
                 </Button>

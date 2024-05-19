@@ -274,9 +274,14 @@ const AdminScreen: React.FC = () => {
                 placeholder="X"
                 type="number"
                 min={0}
+                max={20}
+
                 value={positionX}
                 onChange={(e) => setPositionX(Number(e.target.value))}
               />
+              <FormText>X координата позиции студентов, правильно ответивших на этот вопрос</FormText>
+            </FormGroup>
+            <FormGroup>
               <Label className="position">
                 Введите Y позицию игрока после правильного ответа
               </Label>
@@ -285,9 +290,11 @@ const AdminScreen: React.FC = () => {
                 placeholder="Y"
                 type="number"
                 min={0}
+                max={20}
                 value={positionY}
                 onChange={(e) => setPositionY(Number(e.target.value))}
               />
+              <FormText>Y координата позиции студентов, правильно ответивших на этот вопрос</FormText>
             </FormGroup>
             <Button variant="primary" type="submit" disabled={disableSubmit}>
               Submit

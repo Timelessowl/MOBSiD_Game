@@ -2,6 +2,7 @@ import environ
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from datetime import tzinfo, timedelta, datetime, date
 
 env = environ.Env()
 environ.Env.read_env()
@@ -54,7 +55,7 @@ class TestModel(models.Model):
     title = models.CharField(max_length=50, default="Test")
     background = models.ImageField(upload_to="uploads")
     path = models.JSONField()
-    timer = models.DateTimeField(default="00")
+    timer = models.DateTimeField(default=datetime.now)
     currentQuestion = models.IntegerField(default=1)
 
     objects = models.Manager()
