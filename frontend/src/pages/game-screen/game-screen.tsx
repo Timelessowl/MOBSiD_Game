@@ -222,8 +222,8 @@ const GameScreen: React.FC = () => {
     setFQuestionChanged(false);
   }
 
-  console.log("-----------------");
-  console.log(currentQuestionIndex);
+  // console.log("-----------------");
+  // console.log(currentQuestionIndex);
 
 
   const disableSubmit = (): boolean | undefined =>

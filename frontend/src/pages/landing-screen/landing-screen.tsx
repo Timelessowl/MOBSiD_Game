@@ -31,11 +31,15 @@ const LandingScreen: React.FC = () => {
     if (user?.activeTestId === null) {
       store.dispatch(setActiveTest({ testId }));
       store.dispatch(setActiveTestId(testId));
-      store.dispatch(setTestTimer({ testId: testId }));
+      // store.dispatch(setTestTimer({ testId: testId }));
       navigate(`/game/${testId}`);
     } else {
       navigate(`/game/${testId}`);
     }
+  };
+
+  const handleStartTimer = (testId: number) => {
+      store.dispatch(setTestTimer({ testId: testId }));
   };
 
   return (
@@ -74,6 +78,7 @@ const LandingScreen: React.FC = () => {
 
             {totalTests.map((test, i) => (
               <FormGroup key={test["testId"]}>
+                <div style={{display:"block"}}>
                 <Button
                   key={test["testId"]}
                   variant="primary"
@@ -85,6 +90,14 @@ const LandingScreen: React.FC = () => {
                 >
                   {`${test["title"]}`}
                 </Button>
+                {user?.isSuperUser ?
+                  <Button
+                    style={{marginLeft:'16px', backgroundColor:'green'}}
+                    onClick={() => handleStartTimer(test["testId"])}
+                  > Запуск таймера</Button>
+                : <div/>
+                }
+                </div>
               </FormGroup>
             ))}
           </Form>

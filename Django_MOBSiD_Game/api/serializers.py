@@ -126,7 +126,7 @@ class UserLoginSerializer(serializers.Serializer):
             username=clean_data["email"], password=clean_data["password"]
         )
         if not user:
-            raise ValidationError("user not found")
+            raise ValidationError("Не удалось войти в аккаунт. Неверное имя пользователя или пароль")
         return user
 
 

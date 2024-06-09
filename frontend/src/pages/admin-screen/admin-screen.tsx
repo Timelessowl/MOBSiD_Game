@@ -24,6 +24,7 @@ import {
 } from "../../store/api-actions";
 import { getAllTests } from "../../store/tests-data/selectors";
 import { JSONObject } from "../../types/types";
+import GameField from "../../components/game-field/game-field";
 
 const AdminScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -36,17 +37,20 @@ const AdminScreen: React.FC = () => {
   const [OptionsSwitch, setOptionsSwitch] = useState(false);
   const [Options, setOptions] = useState(["", "", "", "", ""]);
   const [backgroundImg, setBackgroundImg] = useState<File>();
+  const [backgroundStr, setBackgroundStr] = useState('');
   const [positionX, setPositionX] = useState(0);
   const [positionY, setPositionY] = useState(0);
   const [testId, setTestId] = useState(1);
   const [disableSubmit, setDisableSubmit] = useState(true);
   const [newTestTitle, setNewTestTitle] = useState("Test");
+  const [timer, setTimer] = useState("00:00:00");
   const [newTestSetup, setNewTestSetup] = useState(false);
 
   useEffect(() => {
     if (!user?.isSuperUser) {
       navigate(AppRoute.Auth);
     }
+
     if (question !== "" && answer !== "") {
       newTestSetup
         ? setDisableSubmit(backgroundImg === undefined)
@@ -54,7 +58,10 @@ const AdminScreen: React.FC = () => {
     } else {
       setDisableSubmit(true);
     }
-  });
+    totalTests.map((currTest) => {
+      if(currTest['testId'] === testId){setBackgroundStr(currTest['background'] as string)}
+    })
+  }, [testId]);
 
   const handleAuthButtonClick = () => navigate(AppRoute.Auth);
 
@@ -70,6 +77,7 @@ const AdminScreen: React.FC = () => {
   }
 
   const uuid = ["opt1", "opt2", "opt3", "opt4", "opt5"];
+
   const submitNewQuestion = (evt: FormEvent) => {
     evt.preventDefault();
     if (newTestSetup) {
@@ -109,6 +117,7 @@ const AdminScreen: React.FC = () => {
         }),
       );
     }
+    window.location.reload();
   };
 
   const SubmitBackground = (evt: FormEvent) => {
@@ -122,6 +131,7 @@ const AdminScreen: React.FC = () => {
         }),
       );
     }
+    window.location.reload();
   };
 
   const CreateNewTest = (evt: FormEvent) => {
@@ -296,6 +306,20 @@ const AdminScreen: React.FC = () => {
               />
               <FormText>Y координата позиции студентов, правильно ответивших на этот вопрос</FormText>
             </FormGroup>
+            <FormGroup>
+              <Label className="position">
+                Таймер для вопроса
+              </Label>
+              <Input
+                name="posY"
+                placeholder="Y"
+                type='time'
+                step='2'
+                value={timer}
+                onChange={(e) => setTimer(String(e.target.value))}
+              />
+              <FormText></FormText>
+            </FormGroup>
             <Button variant="primary" type="submit" disabled={disableSubmit}>
               Submit
             </Button>
@@ -336,6 +360,13 @@ const AdminScreen: React.FC = () => {
               )}
             </FormGroup>
           </Form>
+        </div>
+        <div style={{marginLeft:'32px'}}>
+          <GameField
+            background={backgroundStr}
+            path={`{\"1\": [${positionX}, ${positionY}]}`}
+            positions={`{\"${user?.username}\" : [1]}`}
+          />
         </div>
       </div>
     </div>

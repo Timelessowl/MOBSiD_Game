@@ -37,6 +37,7 @@ const GameField: React.FC<Props> = (props) => {
   }
   let positionsParsed: JSONObject = {};
   if (positions !== "" && positions !== undefined) {
+    console.log(positions)
     positionsParsed = JSON.parse(positions) as JSONObject;
   }
 

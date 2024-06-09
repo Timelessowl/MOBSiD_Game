@@ -101,7 +101,9 @@ export const registrationAction = createAsyncThunk<
           "Content-Type": "multipart/form-data",
         },
       },
-    );
+    )    .catch(error => {
+      alert(error.response.data)
+    });
     dispatch(
       loginAction({
         email: email,
@@ -120,8 +122,13 @@ export const loginAction = createAsyncThunk<
     extra: AxiosInstance;
   }
 >("user/login", async ({ email, password }, { dispatch, extra: api }) => {
-  await api.post(APIRoute.Login, { email, password });
+     await api.post(APIRoute.Login, { email, password })
+    .catch(error => {
+      alert(error.response.data)
+    });
+
   dispatch(checkAuthAction());
+
 });
 
 export const logoutAction = createAsyncThunk<

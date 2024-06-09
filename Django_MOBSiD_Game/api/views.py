@@ -155,7 +155,6 @@ class UserProgress(APIView):
 
 class UsersPosition(APIView):
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
         serializer = UserProgressSerializer(request.user)
